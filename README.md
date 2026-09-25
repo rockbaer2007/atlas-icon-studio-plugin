@@ -59,6 +59,14 @@ it does not execute arbitrary downloaded plugin code yet. The package format
 stores plugin files as text; large binary assets should be hosted separately
 and referenced by URL.
 
+When creating an install package in ATLAS Administration, the plugin generator
+can use either a locally bundled MDI icon or a custom PNG icon. Search the MDI
+catalog and select an icon, or upload a PNG up to 512 KiB. The PNG's colors and
+transparency are preserved and its image data is embedded in the generated
+package. This option sets the plugin's icon; it does not package arbitrary
+binary files used by the plugin itself. Host those files separately and
+reference them by URL.
+
 ## Release checklist
 
 - Keep the plugin ID stable after publication.
