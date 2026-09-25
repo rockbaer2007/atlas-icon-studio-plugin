@@ -1,0 +1,10 @@
+{
+  "name": "atlas-plugin-template",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Starter repository for ATLAS plugins",
+  "scripts": {
+    "build": "node scripts/build-package.mjs",
+    "check": "node scripts/validate.mjs"
+  }
+}

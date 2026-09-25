@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ATLAS plugin icon">
+  <rect x="3" y="3" width="58" height="58" rx="15" fill="#142b38" stroke="#58d3bd" stroke-width="2"/>
+  <path d="M15 45 29 17h7l14 28h-8l-3-7H26l-3 7Zm14-14h7l-3.5-8Z" fill="#e8eef5"/>
+</svg>
