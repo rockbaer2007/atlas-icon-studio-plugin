@@ -1,8 +1,8 @@
 # ATLAS Plugin Template
 
-Starter repository for publishing one ATLAS plugin through the ATLAS Plugin Hub.
-It contains a working example page, plugin manifest, repository catalog, install
-package generator, artwork placeholders, validation and a GitHub Actions check.
+Starter repository for preparing and testing one ATLAS plugin repository. It
+contains a working example page, plugin manifest, catalog, install package
+builder, artwork placeholders, validation and a GitHub Actions check.
 
 ## Quick start
 
@@ -17,14 +17,16 @@ package generator, artwork placeholders, validation and a GitHub Actions check.
    npm run check
    ```
 
-4. Update `repository.json` with your repository name, homepage and the same
-   plugin ID, name, version and description as the manifest.
+4. Update `repository.json` with your repository name and homepage. The package
+   builder synchronizes the plugin ID, name, version, descriptions, assets and
+   package path from the manifest.
 5. Replace the example app in `plugins/atlas-plugin/`, and replace `icon.svg`,
    `logo.svg` and `preview.svg` with artwork for your plugin.
 6. Enable GitHub Pages with **Deploy from a branch** and the `main` branch.
    The repository catalog is then available at
    `https://raw.githubusercontent.com/<owner>/<repo>/main/repository.json`.
-7. Add that URL in ATLAS Administration to install and test your plugin.
+7. Update the owner and repository name in `install.html`, then add the
+   resulting catalog URL in ATLAS Administration to install and test your plugin.
 
 After every plugin version change, run `npm run build` so the install package
 and repository catalog stay in sync. The validation workflow checks this on
@@ -52,8 +54,10 @@ scripts/
 
 The example plugin is intentionally small and does not request privileged ATLAS
 capabilities. Add capabilities only when the plugin needs and implements them.
-The package format stores plugin files as text; large binary assets should be
-hosted separately and referenced by URL.
+The current generic repository installer stores plugin package files locally;
+it does not execute arbitrary downloaded plugin code yet. The package format
+stores plugin files as text; large binary assets should be hosted separately
+and referenced by URL.
 
 ## Release checklist
 

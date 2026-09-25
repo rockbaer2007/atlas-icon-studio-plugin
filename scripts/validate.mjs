@@ -18,13 +18,16 @@ for (const field of ["id", "name", "version", "description"]) {
   if (entry[field] !== manifest[field]) throw new Error(`Repository ${field} does not match the plugin manifest.`);
 }
 if (entry.package !== `./plugins/atlas-plugin/${entry.package.split("/").at(-1)}`) throw new Error("Package URL must point into plugins/atlas-plugin/.");
+if (entry.entry !== manifest.entry) throw new Error("Repository entry URL does not match the plugin manifest.");
 
 const installPackage = await readJson(entry.package.slice(2));
 if (installPackage.kind !== "atlas.runtime.plugin.install-package") throw new Error("Invalid install package kind.");
 if (installPackage.plugin.id !== manifest.id || installPackage.plugin.version !== manifest.version) throw new Error("Install package does not match the manifest.");
+if (installPackage.filename !== entry.package.split("/").at(-1)) throw new Error("Install package filename does not match its catalog URL.");
 
 const packageFiles = new Map(installPackage.files.map(file => [file.path, file.content]));
 for (const [file, mediaType] of [
+  ["atlas-plugin.json", "application/json"],
   ["README.md", "text/markdown"],
   ["index.html", "text/html"],
   ["styles.css", "text/css"],

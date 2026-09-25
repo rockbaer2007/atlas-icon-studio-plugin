@@ -45,12 +45,13 @@ const installPackage = {
   }))),
 };
 
-const entries = repository.plugins.filter(plugin => plugin.id === manifest.id);
-if (entries.length !== 1) {
-  throw new Error(`Expected exactly one repository entry for ${manifest.id}.`);
+if (repository.plugins.length !== 1) {
+  throw new Error("The starter catalog must contain exactly one plugin entry.");
 }
+const entry = repository.plugins[0];
 
-Object.assign(entries[0], {
+Object.assign(entry, {
+  id: manifest.id,
   name: manifest.name,
   nameI18n: manifest.nameI18n,
   version: manifest.version,
