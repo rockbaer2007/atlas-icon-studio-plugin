@@ -106,17 +106,25 @@
             <button class="button secondary" type="button" data-tool="rect" data-i18n="toolRect">Rechteck</button>
             <button class="button secondary" type="button" data-tool="ellipse" data-i18n="toolEllipse">Ellipse</button>
             <button class="button secondary" type="button" data-tool="line" data-i18n="toolLine">Linie</button>
+            <button class="button secondary" type="button" data-tool="pen" data-i18n="toolPen">Freihand</button>
+            <button class="button secondary" type="button" data-tool="text" data-i18n="toolText">Text</button>
           </div>
           <div class="tool-group">
             <button id="drawing-undo" class="button secondary" type="button" data-i18n="undo">Rückgängig</button>
             <button id="drawing-redo" class="button secondary" type="button" data-i18n="redo">Wiederholen</button>
             <button id="drawing-delete" class="button secondary" type="button" data-i18n="erase">Auswahl löschen</button>
+            <button id="drawing-duplicate" class="button secondary" type="button" data-i18n="duplicate">Duplizieren</button>
+            <button id="drawing-backward" class="button secondary" type="button" data-i18n="sendBackward">Nach hinten</button>
+            <button id="drawing-forward" class="button secondary" type="button" data-i18n="bringForward">Nach vorne</button>
             <button id="drawing-clear" class="button danger" type="button" data-i18n="clear">Leeren</button>
           </div>
           <div class="tool-group drawing-style">
             <label><span data-i18n="fillColor">Füllung</span><input id="drawing-fill" type="color" value="#29cdbb"></label>
+            <label class="checkbox-label"><input id="drawing-fill-transparent" type="checkbox"><span data-i18n="transparentFill">Transparent</span></label>
             <label><span data-i18n="strokeColor">Kontur</span><input id="drawing-stroke" type="color" value="#123b3a"></label>
             <label><span data-i18n="strokeWidth">Linienstärke</span><input id="drawing-stroke-width" type="number" value="4" min="0" max="32" step="1"></label>
+            <label class="text-entry"><span data-i18n="textContent">Textinhalt</span><input id="drawing-text" maxlength="160" placeholder="Text"></label>
+            <label><span data-i18n="textSize">Textgröße</span><input id="drawing-text-size" type="number" value="32" min="6" max="128" step="1"></label>
             <label class="zoom-control"><span data-i18n="zoom">Zoom</span><input id="drawing-zoom" type="range" min="0.5" max="2" step="0.1" value="1"><output id="drawing-zoom-value">100%</output></label>
           </div>
         </div>
@@ -133,6 +141,23 @@
         </div>
         <p class="notice compact" data-i18n="drawingDestination">Die SVG wird heruntergeladen. Farbige Grafiken gehören nicht zum monochromen atlas:-Iconset.</p>
       </section>
+      <dialog id="drawing-export-dialog" class="export-dialog">
+        <form id="drawing-export-form" method="dialog">
+          <h2 data-i18n="exportTitle">Export format</h2>
+          <label for="export-filename" data-i18n="fileName">File name</label>
+          <input id="export-filename" value="atlas-grafik" maxlength="80" required>
+          <label for="export-format" data-i18n="exportFormat">Format</label>
+          <select id="export-format"><option value="svg">SVG</option><option value="png">PNG</option><option value="webp">WebP</option></select>
+          <label for="export-size" data-i18n="exportSize">Raster size</label>
+          <select id="export-size"><option value="256">256 × 256</option><option value="512" selected>512 × 512</option><option value="1024">1024 × 1024</option><option value="2048">2048 × 2048</option></select>
+          <label class="checkbox-label export-transparency"><input id="export-transparent" type="checkbox" checked><span data-i18n="transparentBackground">Transparent background</span></label>
+          <label class="export-bg-color"><span data-i18n="backgroundColor">Background color</span><input id="export-background-color" type="color" value="#ffffff" disabled></label>
+          <div class="dialog-actions">
+            <button id="export-cancel" class="button secondary" type="button" data-i18n="cancel">Cancel</button>
+            <button class="button primary" type="submit" data-i18n="exportDownload">Download</button>
+          </div>
+        </form>
+      </dialog>
     </main>
     <script src="imagetracer_v1.2.6.js"></script>
     <script type="module" src="app.js"></script>

@@ -23,7 +23,7 @@ The builder synchronizes `repository.json` and the generated install package fro
 
 ## Home Assistant `atlas:` icon set
 
-The plugin also includes a separate colored SVG drawing editor with rectangle, ellipse and line tools, selection and move, fill/stroke controls, zoom, clear/delete, up to ten undo/redo steps, browser-local draft storage and SVG download/save-as. This graphics editor remains separate from the monochrome `atlas:` icon set.
+The plugin also includes a separate colored graphics editor with rectangle, ellipse, line, freehand and text tools; selection, move, duplicate and layer ordering; transparent fill/background; stroke, text-size and zoom controls; and up to ten undo/redo steps. Save as exports SVG, PNG or WebP, with optional transparency for raster backgrounds. Drafts stay in browser-local storage. This editor remains separate from the monochrome `atlas:` icon set.
 
 The plugin keeps the icon collection in this browser, lets you add, rename, search, edit and remove icons, import several SVGs at once, and back up or restore the collection as JSON. It exports both individual SVGs and the entire icon set. It exports `atlas-iconset.js`; copy it to `/config/www/atlas-iconset.js`, add `/local/atlas-iconset.js` as a JavaScript module resource in **Settings → Dashboards → Resources**, and reload the Home Assistant frontend. The included samples can then be referenced as `atlas:home`, `atlas:lightbulb` and `atlas:thermometer`.
 

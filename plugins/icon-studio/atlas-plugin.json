@@ -6,12 +6,12 @@
     "en": "ATLAS Icon Studio",
     "fr": "ATLAS Icon Studio"
   },
-  "version": "0.1.5",
-  "description": "Create, preview and export Home Assistant custom SVG icon sets and image assets.",
+  "version": "0.1.6",
+  "description": "Create Home Assistant icon sets, draw colored SVG graphics, and preview image assets.",
   "descriptionI18n": {
-    "de": "Home-Assistant-SVG-Iconsets und Bilddateien erstellen, anzeigen und exportieren.",
-    "en": "Create, preview and export Home Assistant custom SVG icon sets and image assets.",
-    "fr": "Créer, prévisualiser et exporter des jeux d’icônes SVG personnalisés et des images pour Home Assistant."
+    "de": "Home-Assistant-Iconsets erstellen, farbige SVG-Grafiken zeichnen und Bilddateien anzeigen.",
+    "en": "Create Home Assistant icon sets, draw colored SVG graphics, and preview image assets.",
+    "fr": "Créer des jeux d’icônes Home Assistant, dessiner des graphiques SVG en couleur et prévisualiser des images."
   },
   "status": "active",
   "order": 100,

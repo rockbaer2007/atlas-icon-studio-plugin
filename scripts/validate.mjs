@@ -50,4 +50,8 @@ const app = await readFile(path.join(pluginDir, "app.js"), "utf8");
 for (const required of ["createIconsetSource", "atlas-icon-studio-icons-v1", "DOMParser", "ImageTracer", "image/png", "image/jpeg", "image/webp", "convertImageToSvg", "serializeDrawingSvg", "DRAWING_HISTORY_LIMIT"]) {
   if (!app.includes(required)) throw new Error(`Icon Studio is missing ${required}.`);
 }
+const html = await readFile(path.join(pluginDir, "index.html"), "utf8");
+for (const required of ["drawing-fill-transparent", "drawing-export-dialog", "drawing-duplicate", "drawing-forward", "drawing-backward", "data-tool=\"pen\"", "data-tool=\"text\""]) {
+  if (!html.includes(required)) throw new Error(`Icon Studio editor UI is missing ${required}.`);
+}
 console.log(`Validated ${manifest.name} ${manifest.version}.`);

@@ -18,13 +18,21 @@ const translations = {
     toolRect: "Rechteck",
     toolEllipse: "Ellipse",
     toolLine: "Linie",
+    toolPen: "Freihand",
+    toolText: "Text",
     undo: "Rückgängig",
     redo: "Wiederholen",
     erase: "Auswahl löschen",
+    duplicate: "Duplizieren",
+    sendBackward: "Nach hinten",
+    bringForward: "Nach vorne",
     clear: "Leeren",
     fillColor: "Füllung",
+    transparentFill: "Ohne Füllung",
     strokeColor: "Kontur",
     strokeWidth: "Linienstärke",
+    textContent: "Textinhalt",
+    textSize: "Textgröße",
     zoom: "Zoom",
     fileName: "Dateiname",
     saveDrawing: "SVG speichern",
@@ -35,6 +43,16 @@ const translations = {
     drawingNothingSelected: "Wähle zuerst eine Form aus.",
     drawingNameInvalid: "Bitte gib einen gültigen Dateinamen ein.",
     saveAsPrompt: "Name für die SVG-Datei (ohne Endung):",
+    exportTitle: "Grafik exportieren",
+    exportFormat: "Dateiformat",
+    exportSize: "Rastergröße",
+    transparentBackground: "Transparenter Hintergrund",
+    backgroundColor: "Hintergrundfarbe",
+    cancel: "Abbrechen",
+    exportDownload: "Herunterladen",
+    textPrompt: "Text eingeben:",
+    drawingTextInvalid: "Der Text kann nicht als SVG gespeichert werden.",
+    drawingExportFailed: "Dieses Rasterformat wird in diesem Browser nicht unterstützt.",
     eyebrow: "ATLAS PLUGIN",
     title: "ATLAS Icon Studio",
     intro: "Icons erstellen, als Set verwalten und mit dem Präfix atlas: in Home Assistant nutzen.",
@@ -103,13 +121,21 @@ const translations = {
     toolRect: "Rectangle",
     toolEllipse: "Ellipse",
     toolLine: "Line",
+    toolPen: "Freehand",
+    toolText: "Text",
     undo: "Undo",
     redo: "Redo",
     erase: "Delete selection",
+    duplicate: "Duplicate",
+    sendBackward: "Send backward",
+    bringForward: "Bring forward",
     clear: "Clear",
     fillColor: "Fill",
+    transparentFill: "No fill",
     strokeColor: "Stroke",
     strokeWidth: "Stroke width",
+    textContent: "Text content",
+    textSize: "Text size",
     zoom: "Zoom",
     fileName: "File name",
     saveDrawing: "Save SVG",
@@ -120,6 +146,16 @@ const translations = {
     drawingNothingSelected: "Select a shape first.",
     drawingNameInvalid: "Enter a valid file name.",
     saveAsPrompt: "SVG file name (without extension):",
+    exportTitle: "Export graphic",
+    exportFormat: "File format",
+    exportSize: "Raster size",
+    transparentBackground: "Transparent background",
+    backgroundColor: "Background color",
+    cancel: "Cancel",
+    exportDownload: "Download",
+    textPrompt: "Enter text:",
+    drawingTextInvalid: "This text cannot be saved as SVG.",
+    drawingExportFailed: "This raster format is not supported by this browser.",
     eyebrow: "ATLAS PLUGIN",
     title: "ATLAS Icon Studio",
     intro: "Create icons, manage them as a set and use the atlas: prefix in Home Assistant.",
@@ -188,13 +224,21 @@ const translations = {
     toolRect: "Rectangle",
     toolEllipse: "Ellipse",
     toolLine: "Ligne",
+    toolPen: "Dessin libre",
+    toolText: "Texte",
     undo: "Annuler",
     redo: "Rétablir",
     erase: "Supprimer la sélection",
+    duplicate: "Dupliquer",
+    sendBackward: "Reculer",
+    bringForward: "Avancer",
     clear: "Effacer",
     fillColor: "Remplissage",
+    transparentFill: "Sans remplissage",
     strokeColor: "Contour",
     strokeWidth: "Épaisseur du trait",
+    textContent: "Contenu du texte",
+    textSize: "Taille du texte",
     zoom: "Zoom",
     fileName: "Nom du fichier",
     saveDrawing: "Enregistrer le SVG",
@@ -205,6 +249,16 @@ const translations = {
     drawingNothingSelected: "Sélectionnez d’abord une forme.",
     drawingNameInvalid: "Saisissez un nom de fichier valide.",
     saveAsPrompt: "Nom du fichier SVG (sans extension) :",
+    exportTitle: "Exporter le graphique",
+    exportFormat: "Format de fichier",
+    exportSize: "Taille raster",
+    transparentBackground: "Arrière-plan transparent",
+    backgroundColor: "Couleur d’arrière-plan",
+    cancel: "Annuler",
+    exportDownload: "Télécharger",
+    textPrompt: "Saisissez le texte :",
+    drawingTextInvalid: "Ce texte ne peut pas être enregistré en SVG.",
+    drawingExportFailed: "Ce format raster n’est pas pris en charge par ce navigateur.",
     eyebrow: "PLUGIN ATLAS",
     title: "ATLAS Icon Studio",
     intro: "Créez des icônes, gérez-les dans un jeu et utilisez le préfixe atlas: dans Home Assistant.",
@@ -359,16 +413,26 @@ function renderDrawing() {
     } else if (shape.type === "rect") {
       node = document.createElementNS(SVG_NS, "rect");
       for (const key of ["x", "y", "width", "height"]) node.setAttribute(key, String(shape[key]));
-      node.setAttribute("fill", shape.fill);
-    } else {
+    } else if (shape.type === "ellipse") {
       node = document.createElementNS(SVG_NS, "ellipse");
       node.setAttribute("cx", String(shape.x + shape.width / 2));
       node.setAttribute("cy", String(shape.y + shape.height / 2));
       node.setAttribute("rx", String(shape.width / 2));
       node.setAttribute("ry", String(shape.height / 2));
-      node.setAttribute("fill", shape.fill);
+    } else if (shape.type === "path") {
+      node = document.createElementNS(SVG_NS, "path");
+      node.setAttribute("d", shape.d);
+      node.setAttribute("transform", `translate(${shape.x} ${shape.y})`);
+    } else {
+      node = document.createElementNS(SVG_NS, "text");
+      node.setAttribute("x", String(shape.x));
+      node.setAttribute("y", String(shape.y));
+      node.setAttribute("font-family", "sans-serif");
+      node.setAttribute("font-size", String(shape.fontSize));
+      node.textContent = shape.text;
     }
     node.dataset.shapeId = shape.id;
+    node.setAttribute("fill", shape.type === "line" || shape.type === "path" ? "none" : shape.fill);
     node.setAttribute("stroke", shape.stroke);
     node.setAttribute("stroke-width", String(shape.strokeWidth));
     node.setAttribute("stroke-linecap", "round");
@@ -381,6 +445,10 @@ function renderDrawing() {
   $("#drawing-undo").disabled = drawingUndo.length === 0;
   $("#drawing-redo").disabled = drawingRedo.length === 0;
   $("#drawing-delete").disabled = !drawing.shapes.some((shape) => shape.id === selectedShapeId);
+  const selectedIndex = drawing.shapes.findIndex((shape) => shape.id === selectedShapeId);
+  $("#drawing-duplicate").disabled = selectedIndex < 0;
+  $("#drawing-backward").disabled = selectedIndex <= 0;
+  $("#drawing-forward").disabled = selectedIndex < 0 || selectedIndex === drawing.shapes.length - 1;
   const canvas = $("#drawing-canvas");
   canvas.dataset.tool = drawingTool;
 }
@@ -427,7 +495,10 @@ function finishDrawingGesture() {
   const { before, changed, created } = drawingGesture;
   if (created) {
     const shape = drawing.shapes.find((item) => item.id === created);
-    if (!shape || (shape.type === "line" ? Math.hypot(shape.x2 - shape.x1, shape.y2 - shape.y1) < 2 : shape.width < 2 || shape.height < 2)) {
+    const tooSmall = shape?.type === "line"
+      ? Math.hypot(shape.x2 - shape.x1, shape.y2 - shape.y1) < 2
+      : shape?.type === "path" ? shape.d === "M 0 0" : shape?.type !== "text" && (shape.width < 2 || shape.height < 2);
+    if (!shape || tooSmall) {
       drawing.shapes = before;
       selectedShapeId = null;
     } else rememberDrawing(before);
@@ -439,11 +510,12 @@ function finishDrawingGesture() {
 
 function saveDrawing(asNew = false) {
   if (asNew) {
-    const entered = window.prompt(dictionary().saveAsPrompt, drawing.filename.replace(/\.svg$/i, ""));
-    if (entered === null) return;
-    const base = entered.trim().replace(/\.svg$/i, "");
-    if (!base || /[\\/:*?"<>|]/.test(base)) { setDrawingStatus("drawingNameInvalid"); return; }
-    drawing.filename = `${base}.svg`;
+    $("#export-filename").value = drawing.filename.replace(/\.svg$/i, "");
+    $("#export-format").value = "svg";
+    $("#export-transparent").checked = true;
+    $("#export-background-color").disabled = true;
+    $("#drawing-export-dialog").showModal();
+    return;
   }
   try {
     downloadFile(drawing.filename, serializeDrawingSvg(drawing.shapes), "image/svg+xml");
@@ -453,6 +525,53 @@ function saveDrawing(asNew = false) {
   } catch {
     setDrawingStatus("drawingNameInvalid");
   }
+}
+
+async function exportDrawingFile() {
+  const base = $("#export-filename").value.trim().replace(/\.(svg|png|webp)$/i, "");
+  if (!base || /[\u0000-\u001f\\/:*?"<>|]/.test(base)) { setDrawingStatus("drawingNameInvalid"); return; }
+  const formatName = $("#export-format").value;
+  const filename = `${base}.${formatName}`;
+  let svg;
+  try { svg = serializeDrawingSvg(drawing.shapes); } catch { setDrawingStatus("drawingExportFailed"); return; }
+  if (formatName === "svg") {
+    downloadFile(filename, svg, "image/svg+xml");
+  } else {
+    const size = Math.max(256, Math.min(2048, Number($("#export-size").value) || 512));
+    const source = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+    try {
+      const image = new Image();
+      const loaded = new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = reject;
+      });
+      image.src = source;
+      await loaded;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("Canvas is unavailable");
+      if (!$("#export-transparent").checked) {
+        context.fillStyle = $("#export-background-color").value;
+        context.fillRect(0, 0, size, size);
+      }
+      context.drawImage(image, 0, 0, size, size);
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, formatName === "png" ? "image/png" : "image/webp"));
+      if (!blob || blob.type !== (formatName === "png" ? "image/png" : "image/webp")) throw new Error("Image export is unavailable");
+      downloadFile(filename, blob, blob.type);
+    } catch {
+      setDrawingStatus("drawingExportFailed");
+      URL.revokeObjectURL(source);
+      return;
+    }
+    URL.revokeObjectURL(source);
+  }
+  drawing.filename = `${base}.svg`;
+  persistDrawing();
+  renderDrawing();
+  $("#drawing-export-dialog").close();
+  setDrawingStatus("drawingSaved");
 }
 
 function setLanguage(language) {
@@ -824,19 +943,42 @@ $("#drawing-canvas").addEventListener("pointerdown", (event) => {
     selectedShapeId = shapeId;
     const selected = drawing.shapes.find((shape) => shape.id === shapeId);
     if (selected) {
-      if (selected.type !== "line") $("#drawing-fill").value = selected.fill;
+      if (selected.type !== "line" && selected.type !== "path") {
+        $("#drawing-fill-transparent").checked = selected.fill === "none";
+        if (selected.fill !== "none") $("#drawing-fill").value = selected.fill;
+      }
       $("#drawing-stroke").value = selected.stroke;
       $("#drawing-stroke-width").value = String(selected.strokeWidth);
+      if (selected.type === "text") {
+        $("#drawing-text").value = selected.text;
+        $("#drawing-text-size").value = String(selected.fontSize);
+      }
     }
     drawingGesture = shapeId ? { before, start: point, last: point, changed: false, shapeId } : null;
     renderDrawing();
     if (shapeId) $("#drawing-canvas").setPointerCapture(event.pointerId);
     return;
   }
+  if (drawingTool === "text") {
+    const text = $("#drawing-text").value.trim() || window.prompt(dictionary().textPrompt, "");
+    if (!text) return;
+    const textId = drawing.shapes.reduce((max, shape) => Math.max(max, Number(shape.id.slice(6)) || 0), 0) + 1;
+    const shape = { id: `shape-${textId}`, type: "text", x: point.x, y: point.y, text: text.slice(0, 160), fontSize: Math.max(6, Math.min(128, Number($("#drawing-text-size").value) || 32)), fill: $("#drawing-fill").value, stroke: "none", strokeWidth: 0 };
+    if (!validateDrawingShape(shape)) { setDrawingStatus("drawingTextInvalid"); return; }
+    rememberDrawing(before);
+    drawing.shapes.push(shape);
+    selectedShapeId = shape.id;
+    $("#drawing-text").value = shape.text;
+    persistDrawing();
+    renderDrawing();
+    return;
+  }
   const nextId = drawing.shapes.reduce((max, shape) => Math.max(max, Number(shape.id.slice(6)) || 0), 0) + 1;
   const id = `shape-${nextId}`;
-  const common = { id, type: drawingTool, stroke: $("#drawing-stroke").value, strokeWidth: Math.max(0, Math.min(32, Number($("#drawing-stroke-width").value) || 0)), fill: $("#drawing-fill").value };
-  const shape = drawingTool === "line" ? { ...common, x1: point.x, y1: point.y, x2: point.x, y2: point.y } : { ...common, x: point.x, y: point.y, width: 0, height: 0 };
+  const pen = drawingTool === "pen";
+  const fill = $("#drawing-fill-transparent").checked ? "none" : $("#drawing-fill").value;
+  const common = { id, type: pen ? "path" : drawingTool, stroke: $("#drawing-stroke").value, strokeWidth: Math.max(0, Math.min(32, Number($("#drawing-stroke-width").value) || 0)), fill };
+  const shape = drawingTool === "line" ? { ...common, x1: point.x, y1: point.y, x2: point.x, y2: point.y } : pen ? { ...common, x: point.x, y: point.y, d: "M 0 0" } : { ...common, x: point.x, y: point.y, width: 0, height: 0 };
   drawing.shapes.push(shape);
   selectedShapeId = id;
   drawingGesture = { before, start: point, last: point, changed: true, created: id };
@@ -849,6 +991,7 @@ $("#drawing-canvas").addEventListener("pointermove", (event) => {
   if (drawingGesture.created) {
     const shape = drawing.shapes.find((item) => item.id === drawingGesture.created);
     if (shape.type === "line") { shape.x2 = point.x; shape.y2 = point.y; }
+    else if (shape.type === "path") shape.d += ` L ${Math.round(point.x - drawingGesture.start.x)} ${Math.round(point.y - drawingGesture.start.y)}`;
     else { shape.x = Math.min(drawingGesture.start.x, point.x); shape.y = Math.min(drawingGesture.start.y, point.y); shape.width = Math.abs(point.x - drawingGesture.start.x); shape.height = Math.abs(point.y - drawingGesture.start.y); }
   } else {
     const shape = drawing.shapes.find((item) => item.id === drawingGesture.shapeId);
@@ -887,6 +1030,32 @@ $("#drawing-delete").addEventListener("click", () => {
   persistDrawing();
   renderDrawing();
 });
+$("#drawing-duplicate").addEventListener("click", () => {
+  const index = drawing.shapes.findIndex((shape) => shape.id === selectedShapeId);
+  if (index < 0) return;
+  const before = structuredClone(drawing.shapes);
+  const copy = structuredClone(drawing.shapes[index]);
+  const nextId = drawing.shapes.reduce((max, shape) => Math.max(max, Number(shape.id.slice(6)) || 0), 0) + 1;
+  copy.id = `shape-${nextId}`;
+  if (copy.type === "line") { copy.x1 += 12; copy.x2 += 12; copy.y1 += 12; copy.y2 += 12; }
+  else { copy.x = Math.min(500, copy.x + 12); copy.y = Math.min(500, copy.y + 12); }
+  drawing.shapes.splice(index + 1, 0, copy);
+  rememberDrawing(before);
+  selectedShapeId = copy.id;
+  persistDrawing();
+  renderDrawing();
+});
+function reorderSelectedShape(direction) {
+  const index = drawing.shapes.findIndex((shape) => shape.id === selectedShapeId);
+  const target = index + direction;
+  if (index < 0 || target < 0 || target >= drawing.shapes.length) return;
+  rememberDrawing(structuredClone(drawing.shapes));
+  [drawing.shapes[index], drawing.shapes[target]] = [drawing.shapes[target], drawing.shapes[index]];
+  persistDrawing();
+  renderDrawing();
+}
+$("#drawing-backward").addEventListener("click", () => reorderSelectedShape(-1));
+$("#drawing-forward").addEventListener("click", () => reorderSelectedShape(1));
 $("#drawing-clear").addEventListener("click", () => {
   if (!drawing.shapes.length) return;
   rememberDrawing(structuredClone(drawing.shapes));
@@ -896,12 +1065,19 @@ $("#drawing-clear").addEventListener("click", () => {
   renderDrawing();
   setDrawingStatus("drawingCleared");
 });
-$("#drawing-fill").addEventListener("input", (event) => updateDrawing((shape) => { if (shape.type !== "line") shape.fill = event.target.value; }));
+$("#drawing-fill").addEventListener("input", (event) => updateDrawing((shape) => { if (!["line", "path"].includes(shape.type)) shape.fill = event.target.value; }));
+$("#drawing-fill-transparent").addEventListener("change", (event) => updateDrawing((shape) => { if (!["line", "path", "text"].includes(shape.type)) shape.fill = event.target.checked ? "none" : $("#drawing-fill").value; }));
 $("#drawing-stroke").addEventListener("input", (event) => updateDrawing((shape) => { shape.stroke = event.target.value; }));
 $("#drawing-stroke-width").addEventListener("change", (event) => {
   const width = Math.max(0, Math.min(32, Number(event.target.value) || 0));
   event.target.value = String(width);
   updateDrawing((shape) => { shape.strokeWidth = width; });
+});
+$("#drawing-text").addEventListener("change", (event) => updateDrawing((shape) => { if (shape.type === "text" && event.target.value.trim()) shape.text = event.target.value.trim().slice(0, 160); }));
+$("#drawing-text-size").addEventListener("change", (event) => {
+  const size = Math.max(6, Math.min(128, Number(event.target.value) || 32));
+  event.target.value = String(size);
+  updateDrawing((shape) => { if (shape.type === "text") shape.fontSize = size; });
 });
 $("#drawing-zoom").addEventListener("input", (event) => {
   const zoom = clampDrawingZoom(event.target.value);
@@ -918,6 +1094,30 @@ $("#drawing-filename").addEventListener("change", (event) => {
 });
 $("#drawing-save").addEventListener("click", () => saveDrawing());
 $("#drawing-save-as").addEventListener("click", () => saveDrawing(true));
+$("#drawing-export-format").addEventListener("change", (event) => {
+  $("#export-background-color").disabled = event.target.value === "svg" || $("#export-transparent").checked;
+});
+$("#export-transparent").addEventListener("change", (event) => {
+  $("#export-background-color").disabled = event.target.checked || $("#export-format").value === "svg";
+});
+$("#export-cancel").addEventListener("click", () => $("#drawing-export-dialog").close());
+$("#drawing-export-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  void exportDrawingFile();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.target.matches("input, textarea, select")) return;
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
+    event.preventDefault();
+    $(event.shiftKey ? "#drawing-redo" : "#drawing-undo").click();
+  } else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "y") {
+    event.preventDefault();
+    $("#drawing-redo").click();
+  } else if ((event.key === "Delete" || event.key === "Backspace") && selectedShapeId) {
+    event.preventDefault();
+    $("#drawing-delete").click();
+  }
+});
 
 const requestedLanguage = new URLSearchParams(location.search).get("language");
 const savedLanguage = safeStorageGet(LANGUAGE_KEY);
