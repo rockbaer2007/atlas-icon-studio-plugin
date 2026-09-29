@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark light">
+    <title>ATLAS Icon Studio</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="layout">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" data-i18n="eyebrow">ATLAS PLUGIN</p>
+          <h1 data-i18n="title">ATLAS Icon Studio</h1>
+          <p class="intro" data-i18n="intro">Icons ansehen, SVG-Pfade vorbereiten und ein Home-Assistant-Iconset mit dem Präfix atlas: exportieren.</p>
+        </div>
+        <label class="language-control">Sprache
+          <select id="language" aria-label="Language">
+            <option value="de">Deutsch</option>
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+          </select>
+        </label>
+      </header>
+
+      <section class="workspace" aria-label="Icon editor">
+        <div class="editor-pane">
+          <p class="eyebrow" data-i18n="sample">Beispiel</p>
+          <h2 data-i18n="home">Home-Icon</h2>
+          <label for="icon-name" data-i18n="iconName">Iconname</label>
+          <input id="icon-name" value="home" maxlength="48" autocomplete="off">
+          <div class="file-actions">
+            <label class="button secondary" for="svg-file" data-i18n="svgFile">SVG importieren</label>
+            <input id="svg-file" class="visually-hidden" type="file" accept="image/svg+xml,.svg">
+            <label class="button secondary" for="image-file" data-i18n="imageFile">PNG/JPG anzeigen</label>
+            <input id="image-file" class="visually-hidden" type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg">
+          <button id="download-image" class="button secondary" type="button" data-i18n="saveImage" hidden>Bilddatei herunterladen</button>
+          </div>
+          <p class="notice" data-i18n="svgOnly">Für atlas:-Icons werden SVG-Dateien mit einfachen &lt;path&gt;-Elementen unterstützt. PNG/JPG kann hier angesehen und separat gespeichert werden, aber nicht als Vektor-Icon in das Iconset.</p>
+          <button id="download" class="button primary" type="button" data-i18n="download">Iconset-JavaScript herunterladen</button>
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="preview-pane">
+          <p class="eyebrow" data-i18n="preview">Vorschau</p>
+          <div id="icon-preview" class="preview" aria-label="Icon preview"></div>
+          <p class="usage-label" data-i18n="usageLabel">Home Assistant-Aufruf</p>
+          <div class="usage-row">
+            <input id="usage" value="atlas:home" readonly aria-label="Icon name for Home Assistant">
+            <button id="copy-usage" class="button secondary" type="button" data-i18n="copy">Verwendung kopieren</button>
+          </div>
+          <p class="notice" data-i18n="hint">atlas:home funktioniert, sobald das exportierte Iconset als Frontend-Ressource in Home Assistant geladen ist.</p>
+        </div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 96">
+  <rect width="320" height="96" rx="18" fill="#102b32"/>
+  <path d="m21 47 25-21 25 21v27H53V56H39v18H21z" fill="#29cdbb"/>
+  <path d="M64 72h17v12H64z" fill="#f49a0b"/>
+  <text x="100" y="57" fill="#eff9fb" font-family="Arial,sans-serif" font-size="25" font-weight="700">ATLAS ICON STUDIO</text>
+</svg>

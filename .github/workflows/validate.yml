@@ -1,4 +1,4 @@
-name: Validate plugin template
+name: Validate ATLAS Icon Studio plugin
 
 on:
   push:

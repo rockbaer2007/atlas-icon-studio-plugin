@@ -1,8 +1,8 @@
 {
-  "name": "atlas-plugin-template",
+  "name": "atlas-icon-studio-plugin",
   "private": true,
   "version": "1.0.0",
-  "description": "Starter repository for ATLAS plugins",
+  "description": "External ATLAS plugin for Home Assistant icon sets and image previews",
   "scripts": {
     "build": "node scripts/build-package.mjs",
     "check": "node scripts/validate.mjs"

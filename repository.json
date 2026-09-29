@@ -4,39 +4,41 @@
     "type": "plugin-repository",
     "schemaVersion": 1
   },
-  "name": "ATLAS Plugin Template",
+  "name": "ATLAS Icon Studio Plugin Repository",
   "version": "1",
-  "homepage": "https://github.com/rockbaer2007/atlas-plugin-template",
-  "installPage": "https://rockbaer2007.github.io/atlas-plugin-template/install.html",
+  "homepage": "https://github.com/rockbaer2007/atlas-icon-studio-plugin",
+  "installPage": "https://rockbaer2007.github.io/atlas-icon-studio-plugin/install.html",
   "maintainer": "UGSo Software",
   "plugins": [
     {
-      "id": "atlas.plugin.example",
+      "id": "atlas.plugin.icon-studio",
       "atlas": {
         "type": "plugin",
         "schemaVersion": 1
       },
-      "name": "ATLAS Example Plugin",
+      "name": "ATLAS Icon Studio",
       "nameI18n": {
-        "de": "ATLAS-Beispiel-Plugin",
-        "en": "ATLAS Example Plugin"
+        "de": "ATLAS Icon Studio",
+        "en": "ATLAS Icon Studio",
+        "fr": "ATLAS Icon Studio"
       },
       "version": "0.1.0",
-      "description": "A minimal working ATLAS plugin template.",
+      "description": "Create and preview Home Assistant icon sets and image assets.",
       "descriptionI18n": {
-        "de": "Eine minimale, funktionsfähige Vorlage für ATLAS-Plugins.",
-        "en": "A minimal working template for ATLAS plugins."
+        "de": "Home-Assistant-Iconsets und Bilddateien erstellen und anzeigen.",
+        "en": "Create and preview Home Assistant icon sets and image assets.",
+        "fr": "Créer et prévisualiser des jeux d’icônes et des fichiers image pour Home Assistant."
       },
-      "homepage": "https://github.com/rockbaer2007/atlas-plugin-template",
-      "installPage": "https://rockbaer2007.github.io/atlas-plugin-template/install.html",
-      "icon": "./plugins/atlas-plugin/icon.svg",
-      "logo": "./plugins/atlas-plugin/logo.svg",
-      "preview": "./plugins/atlas-plugin/preview.svg",
-      "entry": "/plugin-assets/atlas-plugin/index.html",
-      "package": "./plugins/atlas-plugin/example.atlas-plugin.json",
-      "manifest": "./plugins/atlas-plugin/atlas-plugin.json",
+      "homepage": "https://github.com/rockbaer2007/atlas-icon-studio-plugin",
+      "installPage": "https://rockbaer2007.github.io/atlas-icon-studio-plugin/install.html",
+      "icon": "./plugins/icon-studio/icon.svg",
+      "logo": "./plugins/icon-studio/logo.svg",
+      "preview": "./plugins/icon-studio/preview.svg",
+      "entry": "/plugin-assets/icon-studio/index.html",
+      "package": "./plugins/icon-studio/icon-studio.atlas-plugin.json",
+      "manifest": "./plugins/icon-studio/atlas-plugin.json",
       "capabilities": [
-        "atlas.plugin.example"
+        "atlas.plugin.icon-studio"
       ],
       "compatibility": {
         "atlas": ">=0.1.0",

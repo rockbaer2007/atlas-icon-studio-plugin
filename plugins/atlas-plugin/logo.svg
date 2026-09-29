@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" role="img" aria-label="ATLAS Example Plugin">
-  <rect width="420" height="120" rx="22" fill="#14232d"/>
-  <rect x="22" y="22" width="76" height="76" rx="18" fill="#142b38" stroke="#58d3bd" stroke-width="2"/>
-  <path d="m38 78 17-38h9l18 38H72l-4-10H50l-4 10Zm15-18h12l-6-13Z" fill="#e8eef5"/>
-  <text x="120" y="57" fill="#e8eef5" font-family="system-ui,sans-serif" font-size="25" font-weight="700">ATLAS</text>
-  <text x="120" y="83" fill="#58d3bd" font-family="system-ui,sans-serif" font-size="17">Example Plugin</text>
-</svg>

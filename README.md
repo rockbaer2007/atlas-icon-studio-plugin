@@ -1,81 +1,28 @@
-# ATLAS Plugin Template
+# ATLAS Icon Studio Plugin Repository
 
-Starter repository for preparing and testing one ATLAS plugin repository. It
-contains a working example page, plugin manifest, catalog, install package
-builder, artwork placeholders, validation and a GitHub Actions check.
+An external ATLAS plugin repository for previewing SVG/PNG/JPEG artwork and creating Home Assistant custom icon-set resources. The included vector icon set registers the `atlas:` namespace, with `atlas:home` as its example.
 
-## Quick start
+## Install in ATLAS
 
-1. In GitHub, choose **Use this template** to create a repository for your plugin.
-2. Clone your new repository and edit `plugins/atlas-plugin/atlas-plugin.json`.
-   Set a unique ID such as `atlas.plugin.lights`, a display name, version,
-   description and only the capabilities the plugin actually needs.
-3. Build and validate the package:
-
-   ```sh
-   npm run build
-   npm run check
-   ```
-
-4. Update `repository.json` with your repository name and homepage. The package
-   builder synchronizes the plugin ID, name, version, descriptions, assets and
-   package path from the manifest.
-5. Replace the example app in `plugins/atlas-plugin/`, and replace `icon.svg`,
-   `logo.svg` and `preview.svg` with artwork for your plugin.
-6. Enable GitHub Pages with **Deploy from a branch** and the `main` branch.
-   The repository catalog is then available at
-   `https://raw.githubusercontent.com/<owner>/<repo>/main/repository.json`.
-7. Update the owner and repository name in `install.html`, then add the
-   resulting catalog URL in ATLAS Administration to install and test your plugin.
-
-After every plugin version change, run `npm run build` so the install package
-and repository catalog stay in sync. The validation workflow checks this on
-every push and pull request.
-
-## Template contents
+Add this repository catalog URL in ATLAS Administration's Plugin Manager:
 
 ```text
-repository.json
-install.html
-plugins/atlas-plugin/
-  atlas-plugin.json
-  atlas-plugin.atlas-plugin.json  # generated
-  README.md
-  index.html
-  styles.css
-  app.js
-  icon.svg
-  logo.svg
-  preview.svg
-scripts/
-  build-package.mjs
-  validate.mjs
+https://raw.githubusercontent.com/rockbaer2007/atlas-icon-studio-plugin/main/repository.json
 ```
 
-The example plugin is intentionally small and does not request privileged ATLAS
-capabilities. Add capabilities only when the plugin needs and implements them.
-The current generic repository installer stores plugin package files locally;
-it does not execute arbitrary downloaded plugin code yet. The package format
-stores plugin files as text; large binary assets should be hosted separately
-and referenced by URL.
+The Home Assistant Card Editor remains ATLAS's only integrated reference plugin. Icon Studio is a separately maintained external plugin.
 
-When creating an install package in ATLAS Administration, the plugin generator
-can use either a locally bundled MDI icon or a custom PNG icon. Search the MDI
-catalog and select an icon, or upload a PNG up to 512 KiB. The PNG's colors and
-transparency are preserved and its image data is embedded in the generated
-package. This option sets the plugin's icon; it does not package arbitrary
-binary files used by the plugin itself. Host those files separately and
-reference them by URL.
+## Local development
 
-## Release checklist
+```sh
+npm run build
+npm run check
+```
 
-- Keep the plugin ID stable after publication.
-- Bump the plugin version for every published change.
-- Regenerate the package with `npm run build`.
-- Check that `repository.json`, `atlas-plugin.json` and the generated package
-  show the same ID and version.
-- Review permissions and external requests before listing capabilities.
-- Provide a README, function-specific icon, ATLAS-branded logo and a 16:9 preview.
+The builder synchronizes `repository.json` and the generated install package from the plugin manifest. Run it after each version change.
 
-See [the ATLAS plugin repository format](https://github.com/rockbaer2007/atlas/blob/main/docs/project/specifications/PLUGIN_REPOSITORY_FORMAT.md)
-for the catalog and package contracts.
+## Home Assistant `atlas:` icon set
+
+The plugin exports `atlas-iconset.js`. Copy it to `/config/www/atlas-iconset.js`, add `/local/atlas-iconset.js` as a JavaScript module resource in **Settings → Dashboards → Resources**, and reload the Home Assistant frontend. The included sample can then be referenced as `atlas:home`.
+
+This first version supports SVG icons made from simple path data. PNG and JPEG are previewed as normal images and remain useful as dashboard image assets, but they cannot be returned by Home Assistant's custom icon-set API as vector icons. See [`plugins/icon-studio/README.md`](plugins/icon-studio/README.md) for setup and format limits.

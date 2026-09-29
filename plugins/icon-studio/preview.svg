@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <rect width="640" height="360" rx="18" fill="#101820"/>
+  <rect x="22" y="22" width="596" height="316" rx="14" fill="#19252b" stroke="#34444c"/>
+  <text x="50" y="70" fill="#29cdbb" font-family="Arial,sans-serif" font-size="16" font-weight="700">ATLAS ICON STUDIO</text>
+  <rect x="50" y="94" width="250" height="212" rx="12" fill="#101820" stroke="#34444c"/>
+  <path d="M141 227v-52h35v52h44v-69h26l-87-75-87 75h26v69z" fill="#29cdbb"/>
+  <rect x="330" y="94" width="258" height="212" rx="12" fill="#101820" stroke="#34444c"/>
+  <text x="352" y="137" fill="#eff9fb" font-family="monospace" font-size="20">atlas:home</text>
+  <text x="352" y="177" fill="#aebdc5" font-family="Arial,sans-serif" font-size="15">Export an icon set for Home Assistant</text>
+</svg>
