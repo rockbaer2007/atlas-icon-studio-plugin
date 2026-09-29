@@ -2,6 +2,14 @@
 
 Plugin ID: `atlas.plugin.icon-studio`
 
+## Farbiger SVG-Zeicheneditor / Colored SVG drawing editor / Éditeur SVG couleur
+
+Der separate Zeichenbereich erstellt farbige SVG-Grafiken mit Rechtecken, Ellipsen und Linien. Formen lassen sich auswählen und verschieben; Füllung, Kontur und Linienstärke sind einstellbar. Zoom, Löschen, Leeren sowie bis zu zehn Rückgängig-/Wiederholen-Schritte sind verfügbar. Die Zeichnung wird im lokalen Browserspeicher zwischengespeichert. **SVG speichern** lädt den aktuellen Dateinamen herunter; **Speichern unter** legt einen neuen Namen fest. Die Downloads werden nicht automatisch nach Home Assistant kopiert.
+
+The separate drawing area creates colored SVG graphics with rectangles, ellipses and lines. Shapes can be selected and moved; fill, stroke and stroke width are configurable. It includes zoom, delete, clear and up to ten undo/redo steps. The drawing is kept in browser-local storage. **Save SVG** downloads using the current filename; **Save as** sets a new name. Downloads are not copied to Home Assistant automatically.
+
+La zone de dessin séparée crée des graphiques SVG en couleur avec des rectangles, des ellipses et des lignes. Les formes peuvent être sélectionnées et déplacées ; le remplissage, le contour et son épaisseur sont réglables. Elle propose le zoom, la suppression, l’effacement et jusqu’à dix étapes d’annulation/rétablissement. Le dessin est conservé dans le stockage local du navigateur. **Enregistrer le SVG** télécharge le fichier sous son nom actuel ; **Enregistrer sous** définit un nouveau nom. Les téléchargements ne sont pas copiés automatiquement dans Home Assistant.
+
 ## Deutsch
 
 ATLAS Icon Studio verwaltet eine lokale Icon-Sammlung im Browser, zeigt SVG- und gängige Rasterbilder an und exportiert ein Home-Assistant-Custom-Iconset mit dem Präfix `atlas:`. Beispiele sind `atlas:home`, `atlas:lightbulb` und `atlas:thermometer`.

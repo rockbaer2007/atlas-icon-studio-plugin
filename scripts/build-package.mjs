@@ -14,6 +14,7 @@ const files = [
   ["styles.css", "text/css"],
   ["app.js", "text/javascript"],
   ["iconset-core.js", "text/javascript"],
+  ["drawing-core.js", "text/javascript"],
   ["imagetracer_v1.2.6.js", "text/javascript"],
   ["IMAGETRACER-LICENSE.txt", "text/plain"],
   ["icon.svg", "image/svg+xml"],

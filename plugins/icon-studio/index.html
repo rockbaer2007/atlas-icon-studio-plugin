@@ -91,6 +91,48 @@
           <p class="notice compact" data-i18n="rasterHint">PNG, JPG und WebP bleiben farbige Bilddateien und liegen getrennt in den Unterordnern png/, jpg/ und webp/.</p>
         </aside>
       </section>
+
+      <section class="drawing-editor panel" aria-labelledby="drawing-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="drawing-title" data-i18n="drawingTitle">Grafik zeichnen</h2>
+            <p class="field-hint" data-i18n="drawingIntro">Farbige SVG-Grafiken separat vom monochromen atlas:-Iconset erstellen.</p>
+          </div>
+          <span id="drawing-status" class="status" role="status" aria-live="polite"></span>
+        </div>
+        <div class="drawing-toolbar" role="toolbar" aria-label="Drawing tools">
+          <div class="tool-group">
+            <button class="button secondary is-selected" type="button" data-tool="select" data-i18n="toolSelect">Auswählen</button>
+            <button class="button secondary" type="button" data-tool="rect" data-i18n="toolRect">Rechteck</button>
+            <button class="button secondary" type="button" data-tool="ellipse" data-i18n="toolEllipse">Ellipse</button>
+            <button class="button secondary" type="button" data-tool="line" data-i18n="toolLine">Linie</button>
+          </div>
+          <div class="tool-group">
+            <button id="drawing-undo" class="button secondary" type="button" data-i18n="undo">Rückgängig</button>
+            <button id="drawing-redo" class="button secondary" type="button" data-i18n="redo">Wiederholen</button>
+            <button id="drawing-delete" class="button secondary" type="button" data-i18n="erase">Auswahl löschen</button>
+            <button id="drawing-clear" class="button danger" type="button" data-i18n="clear">Leeren</button>
+          </div>
+          <div class="tool-group drawing-style">
+            <label><span data-i18n="fillColor">Füllung</span><input id="drawing-fill" type="color" value="#29cdbb"></label>
+            <label><span data-i18n="strokeColor">Kontur</span><input id="drawing-stroke" type="color" value="#123b3a"></label>
+            <label><span data-i18n="strokeWidth">Linienstärke</span><input id="drawing-stroke-width" type="number" value="4" min="0" max="32" step="1"></label>
+            <label class="zoom-control"><span data-i18n="zoom">Zoom</span><input id="drawing-zoom" type="range" min="0.5" max="2" step="0.1" value="1"><output id="drawing-zoom-value">100%</output></label>
+          </div>
+        </div>
+        <div class="drawing-canvas-wrap">
+          <svg id="drawing-canvas" viewBox="0 0 512 512" role="img" aria-label="SVG drawing canvas">
+            <rect class="canvas-background" x="0" y="0" width="512" height="512"></rect>
+            <g id="drawing-shapes"></g>
+          </svg>
+        </div>
+        <div class="drawing-save-row">
+          <label class="drawing-filename"><span data-i18n="fileName">Dateiname</span><input id="drawing-filename" value="atlas-grafik.svg" maxlength="80"></label>
+          <button id="drawing-save" class="button primary" type="button" data-i18n="saveDrawing">SVG speichern</button>
+          <button id="drawing-save-as" class="button secondary" type="button" data-i18n="saveDrawingAs">Speichern unter …</button>
+        </div>
+        <p class="notice compact" data-i18n="drawingDestination">Die SVG wird heruntergeladen. Farbige Grafiken gehören nicht zum monochromen atlas:-Iconset.</p>
+      </section>
     </main>
     <script src="imagetracer_v1.2.6.js"></script>
     <script type="module" src="app.js"></script>

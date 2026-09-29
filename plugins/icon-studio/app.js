@@ -8,9 +8,33 @@ import {
   validateIconCollection,
   validateIconDefinition,
 } from "./iconset-core.js";
+import { clampDrawingZoom, DRAWING_HISTORY_LIMIT, serializeDrawingSvg } from "./drawing-core.js";
 
 const translations = {
   de: {
+    drawingTitle: "Grafik zeichnen",
+    drawingIntro: "Farbige SVG-Grafiken separat vom monochromen atlas:-Iconset erstellen.",
+    toolSelect: "Auswählen",
+    toolRect: "Rechteck",
+    toolEllipse: "Ellipse",
+    toolLine: "Linie",
+    undo: "Rückgängig",
+    redo: "Wiederholen",
+    erase: "Auswahl löschen",
+    clear: "Leeren",
+    fillColor: "Füllung",
+    strokeColor: "Kontur",
+    strokeWidth: "Linienstärke",
+    zoom: "Zoom",
+    fileName: "Dateiname",
+    saveDrawing: "SVG speichern",
+    saveDrawingAs: "Speichern unter …",
+    drawingDestination: "Die SVG wird heruntergeladen. Farbige Grafiken gehören nicht zum monochromen atlas:-Iconset.",
+    drawingSaved: "SVG-Grafik heruntergeladen.",
+    drawingCleared: "Zeichenfläche geleert.",
+    drawingNothingSelected: "Wähle zuerst eine Form aus.",
+    drawingNameInvalid: "Bitte gib einen gültigen Dateinamen ein.",
+    saveAsPrompt: "Name für die SVG-Datei (ohne Endung):",
     eyebrow: "ATLAS PLUGIN",
     title: "ATLAS Icon Studio",
     intro: "Icons erstellen, als Set verwalten und mit dem Präfix atlas: in Home Assistant nutzen.",
@@ -73,6 +97,29 @@ const translations = {
     count: "{count} Icons",
   },
   en: {
+    drawingTitle: "Draw a graphic",
+    drawingIntro: "Create colored SVG graphics separately from the monochrome atlas: icon set.",
+    toolSelect: "Select",
+    toolRect: "Rectangle",
+    toolEllipse: "Ellipse",
+    toolLine: "Line",
+    undo: "Undo",
+    redo: "Redo",
+    erase: "Delete selection",
+    clear: "Clear",
+    fillColor: "Fill",
+    strokeColor: "Stroke",
+    strokeWidth: "Stroke width",
+    zoom: "Zoom",
+    fileName: "File name",
+    saveDrawing: "Save SVG",
+    saveDrawingAs: "Save as …",
+    drawingDestination: "The SVG is downloaded. Colored graphics are separate from the monochrome atlas: icon set.",
+    drawingSaved: "SVG graphic downloaded.",
+    drawingCleared: "Canvas cleared.",
+    drawingNothingSelected: "Select a shape first.",
+    drawingNameInvalid: "Enter a valid file name.",
+    saveAsPrompt: "SVG file name (without extension):",
     eyebrow: "ATLAS PLUGIN",
     title: "ATLAS Icon Studio",
     intro: "Create icons, manage them as a set and use the atlas: prefix in Home Assistant.",
@@ -135,6 +182,29 @@ const translations = {
     count: "{count} icons",
   },
   fr: {
+    drawingTitle: "Dessiner un graphique",
+    drawingIntro: "Créez des graphiques SVG en couleur, séparément du jeu d’icônes monochromes atlas:.",
+    toolSelect: "Sélectionner",
+    toolRect: "Rectangle",
+    toolEllipse: "Ellipse",
+    toolLine: "Ligne",
+    undo: "Annuler",
+    redo: "Rétablir",
+    erase: "Supprimer la sélection",
+    clear: "Effacer",
+    fillColor: "Remplissage",
+    strokeColor: "Contour",
+    strokeWidth: "Épaisseur du trait",
+    zoom: "Zoom",
+    fileName: "Nom du fichier",
+    saveDrawing: "Enregistrer le SVG",
+    saveDrawingAs: "Enregistrer sous…",
+    drawingDestination: "Le SVG est téléchargé. Les graphiques en couleur sont séparés du jeu d’icônes monochromes atlas:.",
+    drawingSaved: "Graphique SVG téléchargé.",
+    drawingCleared: "Zone de dessin effacée.",
+    drawingNothingSelected: "Sélectionnez d’abord une forme.",
+    drawingNameInvalid: "Saisissez un nom de fichier valide.",
+    saveAsPrompt: "Nom du fichier SVG (sans extension) :",
     eyebrow: "PLUGIN ATLAS",
     title: "ATLAS Icon Studio",
     intro: "Créez des icônes, gérez-les dans un jeu et utilisez le préfixe atlas: dans Home Assistant.",
@@ -208,12 +278,15 @@ const LANGUAGE_KEY = "atlas-icon-studio-language";
 const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
 const MAX_SVG_SIZE = 2 * 1024 * 1024;
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
+const DRAWING_STORAGE_KEY = "atlas-icon-studio-drawing-v1";
+const SVG_NS = "http://www.w3.org/2000/svg";
 const $ = (selector) => document.querySelector(selector);
 const iconNameInput = $("#icon-name");
 const iconPathInput = $("#icon-path");
 const iconViewBoxInput = $("#icon-viewbox");
 const iconPreview = $("#icon-preview");
 const statusNode = $("#status");
+const drawingStatusNode = $("#drawing-status");
 
 function safeStorageGet(key) {
   try { return localStorage.getItem(key); } catch { return null; }
@@ -249,6 +322,137 @@ function format(message, values = {}) {
 
 function announce(key, values) {
   statusNode.textContent = format(dictionary()[key], values);
+}
+
+let drawing = (() => {
+  try {
+    const saved = JSON.parse(safeStorageGet(DRAWING_STORAGE_KEY) ?? "null");
+    if (saved && Array.isArray(saved.shapes) && saved.shapes.every((shape) => serializeDrawingSvg([shape]))) {
+      const filename = typeof saved.filename === "string" && !/[\u0000-\u001f\\/:*?"<>|]/.test(saved.filename) ? saved.filename : "atlas-grafik.svg";
+      return { shapes: saved.shapes, filename: filename.toLowerCase().endsWith(".svg") ? filename : `${filename}.svg` };
+    }
+  } catch { /* Start with a blank canvas if the stored drawing is invalid. */ }
+  return { shapes: [], filename: "atlas-grafik.svg" };
+})();
+let selectedShapeId = null;
+let drawingTool = "select";
+let drawingUndo = [];
+let drawingRedo = [];
+let drawingGesture = null;
+
+function persistDrawing() {
+  safeStorageSet(DRAWING_STORAGE_KEY, JSON.stringify(drawing));
+}
+
+function setDrawingStatus(key) {
+  drawingStatusNode.textContent = dictionary()[key] ?? "";
+}
+
+function renderDrawing() {
+  const group = $("#drawing-shapes");
+  const nodes = drawing.shapes.map((shape) => {
+    let node;
+    if (shape.type === "line") {
+      node = document.createElementNS(SVG_NS, "line");
+      for (const key of ["x1", "y1", "x2", "y2"]) node.setAttribute(key, String(shape[key]));
+      node.setAttribute("fill", "none");
+    } else if (shape.type === "rect") {
+      node = document.createElementNS(SVG_NS, "rect");
+      for (const key of ["x", "y", "width", "height"]) node.setAttribute(key, String(shape[key]));
+      node.setAttribute("fill", shape.fill);
+    } else {
+      node = document.createElementNS(SVG_NS, "ellipse");
+      node.setAttribute("cx", String(shape.x + shape.width / 2));
+      node.setAttribute("cy", String(shape.y + shape.height / 2));
+      node.setAttribute("rx", String(shape.width / 2));
+      node.setAttribute("ry", String(shape.height / 2));
+      node.setAttribute("fill", shape.fill);
+    }
+    node.dataset.shapeId = shape.id;
+    node.setAttribute("stroke", shape.stroke);
+    node.setAttribute("stroke-width", String(shape.strokeWidth));
+    node.setAttribute("stroke-linecap", "round");
+    node.setAttribute("stroke-linejoin", "round");
+    node.classList.toggle("is-selected", selectedShapeId === shape.id);
+    return node;
+  });
+  group.replaceChildren(...nodes);
+  $("#drawing-filename").value = drawing.filename;
+  $("#drawing-undo").disabled = drawingUndo.length === 0;
+  $("#drawing-redo").disabled = drawingRedo.length === 0;
+  $("#drawing-delete").disabled = !drawing.shapes.some((shape) => shape.id === selectedShapeId);
+  const canvas = $("#drawing-canvas");
+  canvas.dataset.tool = drawingTool;
+}
+
+function rememberDrawing(snapshot) {
+  drawingUndo.push(snapshot);
+  if (drawingUndo.length > DRAWING_HISTORY_LIMIT) drawingUndo.shift();
+  drawingRedo = [];
+}
+
+function updateDrawing(mutator) {
+  const selected = drawing.shapes.find((shape) => shape.id === selectedShapeId);
+  if (!selected) return false;
+  const before = structuredClone(drawing.shapes);
+  mutator(selected);
+  rememberDrawing(before);
+  persistDrawing();
+  renderDrawing();
+  return true;
+}
+
+function drawingPoint(event) {
+  const canvas = $("#drawing-canvas");
+  const point = canvas.createSVGPoint();
+  point.x = event.clientX;
+  point.y = event.clientY;
+  const local = point.matrixTransform(canvas.getScreenCTM().inverse());
+  return { x: Math.max(0, Math.min(512, local.x)), y: Math.max(0, Math.min(512, local.y)) };
+}
+
+function setDrawingTool(tool) {
+  drawingTool = tool;
+  document.querySelectorAll("[data-tool]").forEach((button) => button.classList.toggle("is-selected", button.dataset.tool === tool));
+  renderDrawing();
+}
+
+function moveDrawingShape(shape, dx, dy) {
+  for (const key of shape.type === "line" ? ["x1", "x2"] : ["x"]) shape[key] = Math.max(0, Math.min(512, shape[key] + dx));
+  for (const key of shape.type === "line" ? ["y1", "y2"] : ["y"]) shape[key] = Math.max(0, Math.min(512, shape[key] + dy));
+}
+
+function finishDrawingGesture() {
+  if (!drawingGesture) return;
+  const { before, changed, created } = drawingGesture;
+  if (created) {
+    const shape = drawing.shapes.find((item) => item.id === created);
+    if (!shape || (shape.type === "line" ? Math.hypot(shape.x2 - shape.x1, shape.y2 - shape.y1) < 2 : shape.width < 2 || shape.height < 2)) {
+      drawing.shapes = before;
+      selectedShapeId = null;
+    } else rememberDrawing(before);
+  } else if (changed) rememberDrawing(before);
+  drawingGesture = null;
+  persistDrawing();
+  renderDrawing();
+}
+
+function saveDrawing(asNew = false) {
+  if (asNew) {
+    const entered = window.prompt(dictionary().saveAsPrompt, drawing.filename.replace(/\.svg$/i, ""));
+    if (entered === null) return;
+    const base = entered.trim().replace(/\.svg$/i, "");
+    if (!base || /[\\/:*?"<>|]/.test(base)) { setDrawingStatus("drawingNameInvalid"); return; }
+    drawing.filename = `${base}.svg`;
+  }
+  try {
+    downloadFile(drawing.filename, serializeDrawingSvg(drawing.shapes), "image/svg+xml");
+    persistDrawing();
+    setDrawingStatus("drawingSaved");
+    renderDrawing();
+  } catch {
+    setDrawingStatus("drawingNameInvalid");
+  }
 }
 
 function setLanguage(language) {
@@ -610,7 +814,113 @@ $("#copy-usage").addEventListener("click", async () => {
   }
 });
 
+document.querySelectorAll("[data-tool]").forEach((button) => button.addEventListener("click", () => setDrawingTool(button.dataset.tool)));
+$("#drawing-canvas").addEventListener("pointerdown", (event) => {
+  if (event.button !== 0) return;
+  const point = drawingPoint(event);
+  const before = structuredClone(drawing.shapes);
+  if (drawingTool === "select") {
+    const shapeId = event.target.closest("[data-shape-id]")?.dataset.shapeId ?? null;
+    selectedShapeId = shapeId;
+    const selected = drawing.shapes.find((shape) => shape.id === shapeId);
+    if (selected) {
+      if (selected.type !== "line") $("#drawing-fill").value = selected.fill;
+      $("#drawing-stroke").value = selected.stroke;
+      $("#drawing-stroke-width").value = String(selected.strokeWidth);
+    }
+    drawingGesture = shapeId ? { before, start: point, last: point, changed: false, shapeId } : null;
+    renderDrawing();
+    if (shapeId) $("#drawing-canvas").setPointerCapture(event.pointerId);
+    return;
+  }
+  const nextId = drawing.shapes.reduce((max, shape) => Math.max(max, Number(shape.id.slice(6)) || 0), 0) + 1;
+  const id = `shape-${nextId}`;
+  const common = { id, type: drawingTool, stroke: $("#drawing-stroke").value, strokeWidth: Math.max(0, Math.min(32, Number($("#drawing-stroke-width").value) || 0)), fill: $("#drawing-fill").value };
+  const shape = drawingTool === "line" ? { ...common, x1: point.x, y1: point.y, x2: point.x, y2: point.y } : { ...common, x: point.x, y: point.y, width: 0, height: 0 };
+  drawing.shapes.push(shape);
+  selectedShapeId = id;
+  drawingGesture = { before, start: point, last: point, changed: true, created: id };
+  $("#drawing-canvas").setPointerCapture(event.pointerId);
+  renderDrawing();
+});
+$("#drawing-canvas").addEventListener("pointermove", (event) => {
+  if (!drawingGesture) return;
+  const point = drawingPoint(event);
+  if (drawingGesture.created) {
+    const shape = drawing.shapes.find((item) => item.id === drawingGesture.created);
+    if (shape.type === "line") { shape.x2 = point.x; shape.y2 = point.y; }
+    else { shape.x = Math.min(drawingGesture.start.x, point.x); shape.y = Math.min(drawingGesture.start.y, point.y); shape.width = Math.abs(point.x - drawingGesture.start.x); shape.height = Math.abs(point.y - drawingGesture.start.y); }
+  } else {
+    const shape = drawing.shapes.find((item) => item.id === drawingGesture.shapeId);
+    const dx = point.x - drawingGesture.last.x;
+    const dy = point.y - drawingGesture.last.y;
+    if (Math.abs(dx) + Math.abs(dy) > 0.1) drawingGesture.changed = true;
+    moveDrawingShape(shape, dx, dy);
+  }
+  drawingGesture.last = point;
+  renderDrawing();
+});
+$("#drawing-canvas").addEventListener("pointerup", finishDrawingGesture);
+$("#drawing-canvas").addEventListener("pointercancel", finishDrawingGesture);
+$("#drawing-undo").addEventListener("click", () => {
+  if (!drawingUndo.length) return;
+  drawingRedo.push(structuredClone(drawing.shapes));
+  drawing.shapes = drawingUndo.pop();
+  selectedShapeId = null;
+  persistDrawing();
+  renderDrawing();
+});
+$("#drawing-redo").addEventListener("click", () => {
+  if (!drawingRedo.length) return;
+  drawingUndo.push(structuredClone(drawing.shapes));
+  if (drawingUndo.length > DRAWING_HISTORY_LIMIT) drawingUndo.shift();
+  drawing.shapes = drawingRedo.pop();
+  selectedShapeId = null;
+  persistDrawing();
+  renderDrawing();
+});
+$("#drawing-delete").addEventListener("click", () => {
+  if (!drawing.shapes.some((shape) => shape.id === selectedShapeId)) { setDrawingStatus("drawingNothingSelected"); return; }
+  rememberDrawing(structuredClone(drawing.shapes));
+  drawing.shapes = drawing.shapes.filter((shape) => shape.id !== selectedShapeId);
+  selectedShapeId = null;
+  persistDrawing();
+  renderDrawing();
+});
+$("#drawing-clear").addEventListener("click", () => {
+  if (!drawing.shapes.length) return;
+  rememberDrawing(structuredClone(drawing.shapes));
+  drawing.shapes = [];
+  selectedShapeId = null;
+  persistDrawing();
+  renderDrawing();
+  setDrawingStatus("drawingCleared");
+});
+$("#drawing-fill").addEventListener("input", (event) => updateDrawing((shape) => { if (shape.type !== "line") shape.fill = event.target.value; }));
+$("#drawing-stroke").addEventListener("input", (event) => updateDrawing((shape) => { shape.stroke = event.target.value; }));
+$("#drawing-stroke-width").addEventListener("change", (event) => {
+  const width = Math.max(0, Math.min(32, Number(event.target.value) || 0));
+  event.target.value = String(width);
+  updateDrawing((shape) => { shape.strokeWidth = width; });
+});
+$("#drawing-zoom").addEventListener("input", (event) => {
+  const zoom = clampDrawingZoom(event.target.value);
+  $("#drawing-canvas").style.width = `${512 * zoom}px`;
+  $("#drawing-canvas").style.height = `${512 * zoom}px`;
+  $("#drawing-zoom-value").value = `${Math.round(zoom * 100)}%`;
+});
+$("#drawing-filename").addEventListener("change", (event) => {
+  const filename = event.target.value.trim();
+  if (!filename || /[\\/:*?"<>|]/.test(filename)) { event.target.value = drawing.filename; setDrawingStatus("drawingNameInvalid"); return; }
+  drawing.filename = filename.toLowerCase().endsWith(".svg") ? filename : `${filename}.svg`;
+  persistDrawing();
+  renderDrawing();
+});
+$("#drawing-save").addEventListener("click", () => saveDrawing());
+$("#drawing-save-as").addEventListener("click", () => saveDrawing(true));
+
 const requestedLanguage = new URLSearchParams(location.search).get("language");
 const savedLanguage = safeStorageGet(LANGUAGE_KEY);
 setLanguage(translations[requestedLanguage] ? requestedLanguage : translations[savedLanguage] ? savedLanguage : "de");
 selectIcon(activeName);
+renderDrawing();
