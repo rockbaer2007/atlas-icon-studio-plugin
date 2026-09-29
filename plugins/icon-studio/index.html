@@ -41,8 +41,8 @@
           <div class="file-actions">
             <label class="button secondary" for="svg-file" data-i18n="importSvg">SVG importieren</label>
             <input id="svg-file" class="visually-hidden" type="file" accept="image/svg+xml,.svg" multiple>
-            <label class="button secondary" for="image-file" data-i18n="viewImage">PNG/JPG ansehen</label>
-            <input id="image-file" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/bmp,image/x-icon,.png,.jpg,.jpeg,.gif,.webp,.bmp,.ico">
+            <label class="button secondary" for="image-file" data-i18n="viewImage">PNG/JPG/WebP ansehen</label>
+            <input id="image-file" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp">
           </div>
         </aside>
 
@@ -63,6 +63,7 @@
           <textarea id="icon-path" rows="7" spellcheck="false"></textarea>
           <p class="field-hint" data-i18n="pathHint">Unterstützt werden monochrome SVG-Pfade. Füllfarben aus importierten SVGs werden vereinheitlicht.</p>
           <button id="download-svg" class="button secondary full-width" type="button" data-i18n="downloadSvg">Aktuelles Icon als SVG speichern</button>
+          <p class="notice compact" data-i18n="svgFolderHint">Einzelne SVG-Datei nach dem Download nach /config/www/atlas-icons/svg/ kopieren.</p>
         </section>
 
         <aside class="preview-pane panel" aria-labelledby="preview-title">
@@ -70,7 +71,15 @@
           <div id="icon-preview" class="preview" aria-label="Icon preview"></div>
           <div id="image-preview" class="image-preview" hidden>
             <img id="preview-image" alt="">
+            <p id="image-destination" class="notice" hidden></p>
             <button id="download-image" class="button secondary full-width" type="button" data-i18n="saveImage">Bilddatei herunterladen</button>
+            <p class="field-hint" data-i18n="conversionHint">Optional: Einfache Logos lassen sich oft gut nach SVG umwandeln; das Originalbild bleibt erhalten.</p>
+            <button id="convert-image" class="button secondary full-width" type="button" data-i18n="convertToSvg">In SVG umwandeln</button>
+            <div id="trace-preview" class="trace-preview" hidden>
+              <img id="trace-preview-image" alt="">
+              <p id="trace-destination" class="notice"></p>
+              <button id="download-traced-svg" class="button secondary full-width" type="button" data-i18n="downloadTracedSvg">Vektorisierte SVG herunterladen</button>
+            </div>
           </div>
           <p class="usage-label" data-i18n="haUsage">Home-Assistant-Aufruf</p>
           <div class="usage-row">
@@ -78,11 +87,12 @@
             <button id="copy-usage" class="button secondary" type="button" data-i18n="copy">Kopieren</button>
           </div>
           <button id="download-set" class="button primary full-width" type="button" data-i18n="downloadSet">Iconset exportieren</button>
-          <p class="notice" data-i18n="haHint">Das exportierte JavaScript als Frontend-Ressource in Home Assistant laden, dann funktionieren atlas:-Icons.</p>
-          <p class="notice compact" data-i18n="rasterHint">PNG/JPG und weitere Bildformate werden angezeigt, aber nicht als atlas:-Vektor-Icons exportiert.</p>
+          <p class="notice" data-i18n="haHint">Iconset-JavaScript nach /config/www/atlas-iconset.js kopieren und als Ressource /local/atlas-iconset.js in Home Assistant eintragen.</p>
+          <p class="notice compact" data-i18n="rasterHint">PNG, JPG und WebP bleiben farbige Bilddateien und liegen getrennt in den Unterordnern png/, jpg/ und webp/.</p>
         </aside>
       </section>
     </main>
+    <script src="imagetracer_v1.2.6.js"></script>
     <script type="module" src="app.js"></script>
   </body>
 </html>

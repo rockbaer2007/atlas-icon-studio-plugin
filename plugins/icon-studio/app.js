@@ -22,7 +22,7 @@ const translations = {
     exportCollection: "Sammlung sichern",
     importCollection: "Sammlung importieren",
     importSvg: "SVG importieren",
-    viewImage: "Bild ansehen",
+    viewImage: "PNG/JPG/WebP ansehen",
     editIcon: "Icon bearbeiten",
     iconName: "Iconname",
     nameHint: "Kleinbuchstaben, Zahlen und Bindestriche verwenden.",
@@ -30,13 +30,21 @@ const translations = {
     pathData: "SVG-Pfaddaten",
     pathHint: "Monochrome SVG-Pfade. Füllfarben aus importierten SVGs werden vereinheitlicht.",
     downloadSvg: "Aktuelles Icon als SVG speichern",
+    svgFolderHint: "Einzelne SVG-Datei nach dem Download nach /config/www/atlas-icons/svg/ kopieren.",
     preview: "Vorschau",
     saveImage: "Bilddatei herunterladen",
     haUsage: "Home-Assistant-Aufruf",
     copy: "Kopieren",
     downloadSet: "Iconset exportieren",
-    haHint: "Exportiertes JavaScript als Frontend-Ressource in Home Assistant laden, dann funktionieren atlas:-Icons.",
-    rasterHint: "PNG/JPG und weitere Bildformate werden angezeigt, aber nicht als atlas:-Vektor-Icons exportiert.",
+    haHint: "Iconset-JavaScript nach /config/www/atlas-iconset.js kopieren und als Ressource /local/atlas-iconset.js in Home Assistant eintragen.",
+    rasterHint: "PNG, JPG und WebP bleiben farbige Bilddateien in den getrennten Unterordnern png/, jpg/ und webp/; sie gehören nicht zum atlas:-Iconset.",
+    imageDestination: "Nach dem Download nach {folder} kopieren. Home-Assistant-Pfad: {url}",
+    conversionHint: "Optional: Einfache Logos lassen sich oft gut nach SVG umwandeln; das Originalbild bleibt erhalten.",
+    convertToSvg: "In SVG umwandeln",
+    downloadTracedSvg: "Vektorisierte SVG herunterladen",
+    traceDestination: "Vektorisierte Datei nach dem Download nach /config/www/atlas-icons/svg/ kopieren. URL: /local/atlas-icons/svg/{name}.svg",
+    traceReady: "SVG-Vorschau erstellt. Das farbige Vektorbild kann separat gespeichert werden.",
+    traceFailed: "Umwandlung fehlgeschlagen. Versuche es mit einem kleineren oder einfacheren Bild.",
     created: "Neues Icon angelegt.",
     deleted: "Icon gelöscht.",
     homeProtected: "Das Beispiel atlas:home kann nicht gelöscht werden.",
@@ -76,7 +84,7 @@ const translations = {
     exportCollection: "Back up collection",
     importCollection: "Import collection",
     importSvg: "Import SVG",
-    viewImage: "View image",
+    viewImage: "View PNG/JPG/WebP",
     editIcon: "Edit icon",
     iconName: "Icon name",
     nameHint: "Use lowercase letters, numbers and hyphens.",
@@ -84,13 +92,21 @@ const translations = {
     pathData: "SVG path data",
     pathHint: "Monochrome SVG paths. Imported fill colors are normalized.",
     downloadSvg: "Save current icon as SVG",
+    svgFolderHint: "After downloading, copy an individual SVG file to /config/www/atlas-icons/svg/.",
     preview: "Preview",
     saveImage: "Download image file",
     haUsage: "Home Assistant usage",
     copy: "Copy",
     downloadSet: "Export icon set",
-    haHint: "Load the exported JavaScript as a Home Assistant frontend resource to use atlas: icons.",
-    rasterHint: "PNG/JPG and other image formats can be viewed, but are not exported as atlas: vector icons.",
+    haHint: "Copy the icon-set JavaScript to /config/www/atlas-iconset.js and add /local/atlas-iconset.js as a Home Assistant resource.",
+    rasterHint: "PNG, JPG and WebP remain colored image files in separate png/, jpg/ and webp/ folders; they are not part of the atlas: icon set.",
+    imageDestination: "After downloading, copy the file to {folder}. Home Assistant path: {url}",
+    conversionHint: "Optional: simple logos often trace well to SVG; the original image stays unchanged.",
+    convertToSvg: "Convert to SVG",
+    downloadTracedSvg: "Download vectorized SVG",
+    traceDestination: "After downloading, copy the vector file to /config/www/atlas-icons/svg/. URL: /local/atlas-icons/svg/{name}.svg",
+    traceReady: "SVG preview created. Save the colored vector image separately.",
+    traceFailed: "Conversion failed. Try a smaller or simpler image.",
     created: "New icon created.",
     deleted: "Icon deleted.",
     homeProtected: "The atlas:home sample cannot be deleted.",
@@ -130,7 +146,7 @@ const translations = {
     exportCollection: "Sauvegarder la collection",
     importCollection: "Importer une collection",
     importSvg: "Importer un SVG",
-    viewImage: "Afficher une image",
+    viewImage: "Afficher PNG/JPG/WebP",
     editIcon: "Modifier l’icône",
     iconName: "Nom de l’icône",
     nameHint: "Utilisez des minuscules, des chiffres et des tirets.",
@@ -138,13 +154,21 @@ const translations = {
     pathData: "Données du chemin SVG",
     pathHint: "Chemins SVG monochromes. Les couleurs de remplissage importées sont uniformisées.",
     downloadSvg: "Enregistrer l’icône actuelle en SVG",
+    svgFolderHint: "Après le téléchargement, copiez le fichier SVG individuel dans /config/www/atlas-icons/svg/.",
     preview: "Aperçu",
     saveImage: "Télécharger le fichier image",
     haUsage: "Utilisation dans Home Assistant",
     copy: "Copier",
     downloadSet: "Exporter le jeu d’icônes",
-    haHint: "Chargez le JavaScript exporté comme ressource frontend Home Assistant pour utiliser les icônes atlas:.",
-    rasterHint: "Les PNG/JPG et autres formats image peuvent être affichés, mais pas exportés comme icônes vectorielles atlas:.",
+    haHint: "Copiez le JavaScript du jeu d’icônes dans /config/www/atlas-iconset.js et ajoutez /local/atlas-iconset.js comme ressource Home Assistant.",
+    rasterHint: "Les PNG, JPG et WebP restent des images en couleur dans les dossiers séparés png/, jpg/ et webp/ ; ils ne font pas partie du jeu d’icônes atlas:.",
+    imageDestination: "Après le téléchargement, copiez le fichier dans {folder}. Chemin Home Assistant : {url}",
+    conversionHint: "Facultatif : les logos simples se vectorisent souvent bien ; l’image originale reste intacte.",
+    convertToSvg: "Convertir en SVG",
+    downloadTracedSvg: "Télécharger le SVG vectorisé",
+    traceDestination: "Après le téléchargement, copiez le fichier vectorisé dans /config/www/atlas-icons/svg/. URL : /local/atlas-icons/svg/{name}.svg",
+    traceReady: "Aperçu SVG créé. Enregistrez séparément l’image vectorielle en couleur.",
+    traceFailed: "Échec de la conversion. Essayez avec une image plus petite ou plus simple.",
     created: "Nouvelle icône créée.",
     deleted: "Icône supprimée.",
     homeProtected: "L’exemple atlas:home ne peut pas être supprimé.",
@@ -181,7 +205,7 @@ const DEFAULT_ICONS = {
 };
 const STORAGE_KEY = "atlas-icon-studio-icons-v1";
 const LANGUAGE_KEY = "atlas-icon-studio-language";
-const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/gif", "image/webp", "image/bmp", "image/x-icon", "image/vnd.microsoft.icon"]);
+const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
 const MAX_SVG_SIZE = 2 * 1024 * 1024;
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
 const $ = (selector) => document.querySelector(selector);
@@ -213,6 +237,8 @@ let icons = loadIcons();
 let activeName = "home";
 let currentImageUrl = null;
 let currentImageFile = null;
+let currentTraceUrl = null;
+let currentTraceSvg = null;
 let currentLanguage = "de";
 
 function dictionary() { return translations[currentLanguage] ?? translations.en; }
@@ -417,17 +443,70 @@ async function importSvg(file, requestedName = iconNameInput.value.trim()) {
 
 function showImage(file) {
   const extension = file.name.toLowerCase().split(".").pop();
-  const allowedWithoutMime = new Set(["png", "jpg", "jpeg", "gif", "webp", "bmp", "ico"]);
+  const allowedWithoutMime = new Set(["png", "jpg", "jpeg", "webp"]);
   if (!IMAGE_TYPES.has(file.type) && !(file.type === "" && allowedWithoutMime.has(extension))) { announce("imageType"); return; }
   if (file.size > MAX_IMAGE_SIZE) { announce("imageTooLarge"); return; }
   if (currentImageUrl) URL.revokeObjectURL(currentImageUrl);
+  if (currentTraceUrl) URL.revokeObjectURL(currentTraceUrl);
+  currentTraceUrl = null;
+  currentTraceSvg = null;
   currentImageFile = file;
   currentImageUrl = URL.createObjectURL(file);
   $("#preview-image").src = currentImageUrl;
   $("#preview-image").alt = file.name;
+  $("#trace-preview").hidden = true;
+  $("#image-destination").hidden = false;
+  const formatName = extension === "jpeg" ? "jpg" : extension;
+  const rasterFormat = IMAGE_TYPES.has(file.type) ? ({ "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp" })[file.type] : formatName;
+  const folder = `/config/www/atlas-icons/${rasterFormat}/`;
+  const url = `/local/atlas-icons/${rasterFormat}/${encodeURIComponent(file.name)}`;
+  $("#image-destination").textContent = format(dictionary().imageDestination, { folder, url });
   $("#image-preview").hidden = false;
   $("#icon-preview").hidden = true;
   announce("imageLoaded");
+}
+
+async function convertImageToSvg() {
+  if (!currentImageFile) return;
+  try {
+    const image = $("#preview-image");
+    if (!image.complete || !image.naturalWidth) {
+      await new Promise((resolve, reject) => {
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", reject, { once: true });
+      });
+    }
+    const maxSide = 512;
+    const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const tracer = window.ImageTracer;
+    if (!tracer?.imagedataToSVG) throw new Error("Vectorizer is unavailable");
+    currentTraceSvg = tracer.imagedataToSVG(context.getImageData(0, 0, canvas.width, canvas.height), {
+      numberofcolors: 8,
+      pathomit: 8,
+      ltres: 1,
+      qtres: 1,
+      roundcoords: 1,
+      linefilter: true,
+      viewbox: true,
+      desc: false,
+    });
+    if (currentTraceUrl) URL.revokeObjectURL(currentTraceUrl);
+    currentTraceUrl = URL.createObjectURL(new Blob([currentTraceSvg], { type: "image/svg+xml" }));
+    const tracePreview = $("#trace-preview-image");
+    tracePreview.src = currentTraceUrl;
+    tracePreview.alt = `${currentImageFile.name} — SVG`;
+    const name = suggestIconName(currentImageFile.name, {});
+    $("#trace-destination").textContent = format(dictionary().traceDestination, { name });
+    $("#trace-preview").hidden = false;
+    announce("traceReady");
+  } catch {
+    announce("traceFailed");
+  }
 }
 
 function exportIconSet() {
@@ -498,6 +577,12 @@ $("#image-file").addEventListener("change", (event) => {
 });
 $("#download-image").addEventListener("click", () => {
   if (currentImageFile) downloadFile(currentImageFile.name, currentImageFile, currentImageFile.type);
+});
+$("#convert-image").addEventListener("click", () => { void convertImageToSvg(); });
+$("#download-traced-svg").addEventListener("click", () => {
+  if (!currentTraceSvg || !currentImageFile) return;
+  const name = suggestIconName(currentImageFile.name, {});
+  downloadFile(`${name}.svg`, currentTraceSvg, "image/svg+xml");
 });
 $("#download-svg").addEventListener("click", () => {
   try {

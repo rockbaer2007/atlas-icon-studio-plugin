@@ -14,7 +14,9 @@ ATLAS Icon Studio verwaltet eine lokale Icon-Sammlung im Browser, zeigt SVG- und
 4. Füge `/local/atlas-iconset.js` in Home Assistant unter **Einstellungen → Dashboards → Ressourcen** als JavaScript-Modul hinzu.
 5. Lade die Home-Assistant-Oberfläche neu und verwende `atlas:home` oder einen anderen exportierten Iconnamen in Ansichten, Entitäten und Karten, die Home-Assistant-Icons unterstützen.
 
-Die Sammlung bleibt im lokalen Browserspeicher. Das Custom Iconset liefert monochrome SVG-Pfade und eine `viewBox`; es ist kein allgemeiner SVG-Renderer. Beim Import werden Pfade übernommen, Dateiname als Iconnamen vorgeschlagen und Farben, CSS-Klassen sowie Verläufe verworfen. Skripte, externe Verweise und Transformationen werden abgelehnt. PNG, JPEG, GIF, WebP, BMP und ICO können angezeigt und heruntergeladen werden, aber nicht als vektorbasierte `atlas:`-Icons exportiert werden. Verwende Rasterbilder in Karten als normale Bilddateien.
+Die Sammlung bleibt im lokalen Browserspeicher. Das Custom Iconset liefert monochrome SVG-Pfade und eine `viewBox`; es ist kein allgemeiner SVG-Renderer. Beim Import werden Pfade übernommen, der Dateiname als Iconname vorgeschlagen und Farben, CSS-Klassen sowie Verläufe verworfen. Skripte, externe Verweise und Transformationen werden abgelehnt. PNG, JPG und WebP bleiben farbige Bilddateien. Nach dem Download kopierst du sie nach `/config/www/atlas-icons/png/`, `/config/www/atlas-icons/jpg/` oder `/config/www/atlas-icons/webp/`; Home Assistant erreicht sie über `/local/atlas-icons/<format>/<dateiname>`.
+
+Rasterbilder können optional im Browser in ein farbiges SVG nachgezeichnet werden. Die Vorschau zeigt das Ergebnis vor dem Download. Die Umwandlung verkleinert Bilder dafür auf höchstens 512 Pixel an der längsten Seite und verwendet bis zu acht Farben. Einfache Logos funktionieren meist besser als Fotos oder detailreiche Motive. Die Originaldatei bleibt unverändert; das erzeugte SVG ist eine separate Grafik in `/config/www/atlas-icons/svg/` und gehört nicht zum monochromen `atlas:`-Iconset.
 
 Das Plugin lädt die erzeugte Ressource herunter. Es ändert keine Home-Assistant-Konfiguration und registriert Ressourcen nicht automatisch.
 
@@ -30,7 +32,9 @@ ATLAS Icon Studio manages a browser-local icon collection, previews SVG and comm
 4. Add `/local/atlas-iconset.js` as a JavaScript module in Home Assistant under **Settings → Dashboards → Resources**.
 5. Reload the Home Assistant frontend and use `atlas:home` or another exported icon name in views, entities and cards that support Home Assistant icons.
 
-The collection stays in browser-local storage. The custom icon set returns monochrome SVG paths and a `viewBox`; it is not a general SVG renderer. SVG imports keep their paths, suggest an icon name from the filename, and discard colors, CSS classes and gradients. Scripts, external references and transforms are rejected. PNG, JPEG, GIF, WebP, BMP and ICO files can be previewed and downloaded, but cannot be exported as vector `atlas:` icons. Use raster images in cards as ordinary image files.
+The collection stays in browser-local storage. The custom icon set returns monochrome SVG paths and a `viewBox`; it is not a general SVG renderer. SVG imports keep their paths, suggest an icon name from the filename, and discard colors, CSS classes and gradients. Scripts, external references and transforms are rejected. PNG, JPG and WebP remain colored image files. After downloading, copy them to `/config/www/atlas-icons/png/`, `/config/www/atlas-icons/jpg/` or `/config/www/atlas-icons/webp/`; Home Assistant serves them at `/local/atlas-icons/<format>/<filename>`.
+
+Raster images can optionally be traced into a colored SVG in the browser. Preview the result before downloading it. Tracing scales the image to a maximum 512-pixel longest side and uses up to eight colors. Simple logos usually trace better than photos or detailed artwork. The original file remains unchanged; the SVG is a separate graphic for `/config/www/atlas-icons/svg/`, not part of the monochrome `atlas:` icon set.
 
 The plugin downloads the generated resource. It does not edit Home Assistant configuration or register resources automatically.
 
@@ -46,6 +50,12 @@ ATLAS Icon Studio gère une collection d’icônes dans le stockage local du nav
 4. Ajoutez `/local/atlas-iconset.js` comme module JavaScript dans Home Assistant, sous **Paramètres → Tableaux de bord → Ressources**.
 5. Rechargez l’interface Home Assistant et utilisez `atlas:home` ou un autre nom d’icône exporté dans les vues, entités et cartes compatibles avec les icônes Home Assistant.
 
-La collection reste dans le stockage local du navigateur. Le jeu personnalisé renvoie des chemins SVG monochromes et un `viewBox` ; ce n’est pas un moteur SVG généraliste. L’import conserve les chemins, propose le nom du fichier comme nom d’icône et supprime les couleurs, les classes CSS et les dégradés. Les scripts, les références externes et les transformations sont refusés. Les fichiers PNG, JPEG, GIF, WebP, BMP et ICO peuvent être affichés et téléchargés, mais ne peuvent pas être exportés comme icônes vectorielles `atlas:`. Utilisez les images matricielles dans les cartes comme des fichiers image ordinaires.
+La collection reste dans le stockage local du navigateur. Le jeu personnalisé renvoie des chemins SVG monochromes et un `viewBox` ; ce n’est pas un moteur SVG généraliste. L’import conserve les chemins, propose le nom du fichier comme nom d’icône et supprime les couleurs, les classes CSS et les dégradés. Les scripts, les références externes et les transformations sont refusés. Les fichiers PNG, JPG et WebP restent des images en couleur. Après le téléchargement, copiez-les dans `/config/www/atlas-icons/png/`, `/config/www/atlas-icons/jpg/` ou `/config/www/atlas-icons/webp/` ; Home Assistant les sert à l’adresse `/local/atlas-icons/<format>/<nom-du-fichier>`.
+
+Les images matricielles peuvent être vectorisées en SVG couleur dans le navigateur, avec un aperçu avant le téléchargement. La conversion réduit l’image à 512 pixels maximum sur son côté le plus long et utilise jusqu’à huit couleurs. Les logos simples donnent généralement de meilleurs résultats que les photos ou les images détaillées. Le fichier original reste intact ; le SVG est un fichier graphique distinct à placer dans `/config/www/atlas-icons/svg/`, séparé du jeu d’icônes monochromes `atlas:`.
 
 Le plugin télécharge la ressource générée. Il ne modifie pas la configuration Home Assistant et n’enregistre pas automatiquement les ressources.
+
+## Logiciel tiers
+
+La vectorisation des images utilise [ImageTracerJS 1.2.6](https://github.com/jankovicsandras/imagetracerjs), distribué sous licence Unlicense. Le texte de cette licence est inclus dans `IMAGETRACER-LICENSE.txt`.

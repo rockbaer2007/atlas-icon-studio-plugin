@@ -33,6 +33,8 @@ for (const [file, mediaType] of [
   ["styles.css", "text/css"],
   ["app.js", "text/javascript"],
   ["iconset-core.js", "text/javascript"],
+  ["imagetracer_v1.2.6.js", "text/javascript"],
+  ["IMAGETRACER-LICENSE.txt", "text/plain"],
   ["icon.svg", "image/svg+xml"],
   ["logo.svg", "image/svg+xml"],
   ["preview.svg", "image/svg+xml"],
@@ -44,7 +46,7 @@ for (const [file, mediaType] of [
 }
 
 const app = await readFile(path.join(pluginDir, "app.js"), "utf8");
-for (const required of ["createIconsetSource", "atlas-icon-studio-icons-v1", "DOMParser", "image/svg+xml"]) {
+for (const required of ["createIconsetSource", "atlas-icon-studio-icons-v1", "DOMParser", "ImageTracer", "image/png", "image/jpeg", "image/webp", "convertImageToSvg"]) {
   if (!app.includes(required)) throw new Error(`Icon Studio is missing ${required}.`);
 }
 console.log(`Validated ${manifest.name} ${manifest.version}.`);
