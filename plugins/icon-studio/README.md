@@ -28,6 +28,8 @@ Rasterbilder können optional im Browser in ein farbiges SVG nachgezeichnet werd
 
 Das Plugin lädt die erzeugte Ressource herunter. Es ändert keine Home-Assistant-Konfiguration und registriert Ressourcen nicht automatisch.
 
+SVG-, PNG-, JPG/JPEG- und WebP-Dateien können auch direkt aus der Bildvorschau von File Studio an Icon Studio übergeben werden. Rasterbilder öffnen sich in der Vorschau; einfache SVG-Pfaddateien werden in das monochrome Iconset importiert. Beide Plugins müssen auf demselben ATLAS-Server installiert sein und die Datei muss weiterhin zugänglich sein. Die Übergabe verwendet einen kurzlebigen Schlüssel im lokalen Browserspeicher und den bereits freigegebenen File-Studio-Dateizugriff.
+
 ## English
 
 ATLAS Icon Studio manages a browser-local icon collection, previews SVG and common raster images, and exports a Home Assistant custom icon set using the `atlas:` prefix. Samples include `atlas:home`, `atlas:lightbulb` and `atlas:thermometer`.
@@ -46,6 +48,8 @@ Raster images can optionally be traced into a colored SVG in the browser. Previe
 
 The plugin downloads the generated resource. It does not edit Home Assistant configuration or register resources automatically.
 
+File Studio can also hand SVG, PNG, JPG/JPEG and WebP files directly to Icon Studio from its image preview. Raster images open in the preview; simple SVG path files are imported into the monochrome icon set. Both plugins must be installed on the same ATLAS server, and the file must remain accessible. The handoff uses a short-lived browser-local key and File Studio's existing approved file access.
+
 ## Français
 
 ATLAS Icon Studio gère une collection d’icônes dans le stockage local du navigateur, affiche les SVG et les formats image courants, et exporte un jeu d’icônes personnalisé Home Assistant avec le préfixe `atlas:`. Exemples : `atlas:home`, `atlas:lightbulb` et `atlas:thermometer`.
@@ -63,6 +67,8 @@ La collection reste dans le stockage local du navigateur. Le jeu personnalisé r
 Les images matricielles peuvent être vectorisées en SVG couleur dans le navigateur, avec un aperçu avant le téléchargement. La conversion réduit l’image à 512 pixels maximum sur son côté le plus long et utilise jusqu’à huit couleurs. Les logos simples donnent généralement de meilleurs résultats que les photos ou les images détaillées. Le fichier original reste intact ; le SVG est un fichier graphique distinct à placer dans `/config/www/atlas-icons/svg/`, séparé du jeu d’icônes monochromes `atlas:`.
 
 Le plugin télécharge la ressource générée. Il ne modifie pas la configuration Home Assistant et n’enregistre pas automatiquement les ressources.
+
+File Studio peut également transmettre directement des fichiers SVG, PNG, JPG/JPEG et WebP depuis son aperçu d’image vers Icon Studio. Les images matricielles s’ouvrent dans l’aperçu ; les fichiers SVG simples contenant des chemins sont importés dans le jeu d’icônes monochromes. Les deux plugins doivent être installés sur le même serveur ATLAS et le fichier doit rester accessible. Le transfert utilise une clé temporaire dans le stockage local du navigateur et l’accès aux fichiers autorisé de File Studio.
 
 ## Logiciel tiers
 

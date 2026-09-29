@@ -103,6 +103,7 @@ const translations = {
     batchTooMany: "Maximal 50 SVG-Dateien und 20 MiB pro Import auswählen.",
     svgTooLarge: "Die SVG-Datei ist zu groß (maximal 2 MiB).",
     imageLoaded: "Bild geladen. Es kann separat heruntergeladen werden.",
+    transferFailed: "Datei aus File Studio konnte nicht geöffnet werden. Prüfe, ob sie noch freigegeben und Icon Studio installiert ist.",
     imageTooLarge: "Das Bild ist zu groß (maximal 20 MiB).",
     imageType: "Dieses Bildformat wird nicht unterstützt.",
     setExported: "Iconset mit {count} Icons exportiert.",
@@ -208,6 +209,7 @@ const translations = {
     batchTooMany: "Select at most 50 SVG files and 20 MiB per import.",
     svgTooLarge: "The SVG file is too large (maximum 2 MiB).",
     imageLoaded: "Image loaded. You can download it separately.",
+    transferFailed: "Could not open the file from File Studio. Check that it is still accessible and Icon Studio is installed.",
     imageTooLarge: "The image is too large (maximum 20 MiB).",
     imageType: "This image format is not supported.",
     setExported: "Exported an icon set with {count} icons.",
@@ -313,6 +315,7 @@ const translations = {
     batchTooMany: "Sélectionnez au maximum 50 fichiers SVG et 20 Mio par importation.",
     svgTooLarge: "Le fichier SVG est trop volumineux (maximum 2 Mio).",
     imageLoaded: "Image chargée. Vous pouvez la télécharger séparément.",
+    transferFailed: "Impossible d’ouvrir le fichier de File Studio. Vérifiez qu’il est toujours accessible et qu’Icon Studio est installé.",
     imageTooLarge: "L’image est trop volumineuse (maximum 20 Mio).",
     imageType: "Ce format d’image n’est pas pris en charge.",
     setExported: "Jeu d’icônes exporté avec {count} icônes.",
@@ -335,6 +338,7 @@ const DEFAULT_ICONS = {
 };
 const STORAGE_KEY = "atlas-icon-studio-icons-v1";
 const LANGUAGE_KEY = "atlas-icon-studio-language";
+const FILE_STUDIO_TRANSFER_PREFIX = "atlas.file-studio.icon-studio-transfer.v1.";
 const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
 const MAX_SVG_SIZE = 2 * 1024 * 1024;
 const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
@@ -780,6 +784,58 @@ async function importSvg(file, requestedName = iconNameInput.value.trim()) {
   }
 }
 
+async function openFileStudioTransfer() {
+  const token = new URLSearchParams(location.search).get("transfer");
+  if (!/^[a-f0-9]{32}$/i.test(token ?? "")) return;
+  const key = `${FILE_STUDIO_TRANSFER_PREFIX}${token}`;
+  const serialized = safeStorageGet(key);
+  try { localStorage.removeItem(key); } catch { /* The transfer is bounded by its expiry. */ }
+  if (!serialized) { announce("transferFailed"); return; }
+
+  try {
+    const transfer = JSON.parse(serialized);
+    const extension = String(transfer.extension ?? "").toLowerCase();
+    const allowedExtensions = new Set(["svg", "png", "jpg", "jpeg", "webp"]);
+    if (
+      !allowedExtensions.has(extension)
+      || typeof transfer.path !== "string"
+      || !transfer.path.startsWith("/")
+      || typeof transfer.name !== "string"
+      || transfer.name !== transfer.name.split(/[\\/]/).pop()
+      || !Number.isFinite(transfer.expiresAt)
+      || transfer.expiresAt < Date.now()
+    ) throw new Error("Invalid or expired transfer");
+
+    const assetUrl = new URL(createAppUrl("api/file-studio/asset"), location.href);
+    if (assetUrl.origin !== location.origin) throw new Error("Unexpected asset origin");
+    assetUrl.searchParams.set("path", transfer.path);
+    const response = await fetch(assetUrl, { cache: "no-store", credentials: "same-origin" });
+    if (!response.ok) throw new Error(`Asset request failed: ${response.status}`);
+    const blob = await response.blob();
+    const isSvg = extension === "svg";
+    if (blob.size > (isSvg ? MAX_SVG_SIZE : MAX_IMAGE_SIZE)) throw new Error("Transferred file exceeds the import limit");
+    const mimeType = isSvg ? "image/svg+xml" : extension === "png" ? "image/png" : extension === "webp" ? "image/webp" : "image/jpeg";
+    const file = new File([blob], transfer.name, { type: mimeType });
+    if (isSvg) {
+      const imported = await importSvg(file, suggestIconName(file.name, icons));
+      if (imported) announce("svgLoaded");
+    } else {
+      showImage(file);
+    }
+  } catch {
+    announce("transferFailed");
+  }
+}
+
+function createAppUrl(path) {
+  const baseUrl = new URL(location.href);
+  baseUrl.search = "";
+  baseUrl.hash = "";
+  baseUrl.pathname = baseUrl.pathname.replace(/\/plugin-assets\/icon-studio\/.*$/, "/");
+  if (!baseUrl.pathname.endsWith("/")) baseUrl.pathname = `${baseUrl.pathname}/`;
+  return new URL(String(path ?? "").replace(/^\/+/, ""), baseUrl).toString();
+}
+
 function showImage(file) {
   const extension = file.name.toLowerCase().split(".").pop();
   const allowedWithoutMime = new Set(["png", "jpg", "jpeg", "webp"]);
@@ -1133,3 +1189,4 @@ const savedLanguage = safeStorageGet(LANGUAGE_KEY);
 setLanguage(translations[requestedLanguage] ? requestedLanguage : translations[savedLanguage] ? savedLanguage : "de");
 selectIcon(activeName);
 renderDrawing();
+void openFileStudioTransfer();
