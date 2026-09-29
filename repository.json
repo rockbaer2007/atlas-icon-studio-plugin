@@ -22,7 +22,7 @@
         "en": "ATLAS Icon Studio",
         "fr": "ATLAS Icon Studio"
       },
-      "version": "0.1.6",
+      "version": "0.1.7",
       "description": "Create Home Assistant icon sets, draw colored SVG graphics, and preview image assets.",
       "descriptionI18n": {
         "de": "Home-Assistant-Iconsets erstellen, farbige SVG-Grafiken zeichnen und Bilddateien anzeigen.",

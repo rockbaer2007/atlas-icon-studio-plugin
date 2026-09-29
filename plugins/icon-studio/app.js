@@ -14,6 +14,7 @@ const translations = {
   de: {
     drawingTitle: "Grafik zeichnen",
     drawingIntro: "Farbige SVG-Grafiken separat vom monochromen atlas:-Iconset erstellen.",
+    drawingTools: "Zeichenwerkzeuge",
     toolSelect: "Auswählen",
     toolRect: "Rechteck",
     toolEllipse: "Ellipse",
@@ -117,6 +118,7 @@ const translations = {
   en: {
     drawingTitle: "Draw a graphic",
     drawingIntro: "Create colored SVG graphics separately from the monochrome atlas: icon set.",
+    drawingTools: "Drawing tools",
     toolSelect: "Select",
     toolRect: "Rectangle",
     toolEllipse: "Ellipse",
@@ -220,6 +222,7 @@ const translations = {
   fr: {
     drawingTitle: "Dessiner un graphique",
     drawingIntro: "Créez des graphiques SVG en couleur, séparément du jeu d’icônes monochromes atlas:.",
+    drawingTools: "Outils de dessin",
     toolSelect: "Sélectionner",
     toolRect: "Rectangle",
     toolEllipse: "Ellipse",
@@ -441,7 +444,6 @@ function renderDrawing() {
     return node;
   });
   group.replaceChildren(...nodes);
-  $("#drawing-filename").value = drawing.filename;
   $("#drawing-undo").disabled = drawingUndo.length === 0;
   $("#drawing-redo").disabled = drawingRedo.length === 0;
   $("#drawing-delete").disabled = !drawing.shapes.some((shape) => shape.id === selectedShapeId);
@@ -584,6 +586,14 @@ function setLanguage(language) {
   });
   document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
     element.placeholder = dictionary()[element.dataset.i18nPlaceholder] ?? "";
+  });
+  document.querySelectorAll("[data-i18n-title]").forEach((element) => {
+    const value = dictionary()[element.dataset.i18nTitle] ?? "";
+    element.title = value;
+    element.setAttribute("aria-label", value);
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+    element.setAttribute("aria-label", dictionary()[element.dataset.i18nAria] ?? "");
   });
   $("#language").value = currentLanguage;
   renderIconList();
@@ -1084,13 +1094,6 @@ $("#drawing-zoom").addEventListener("input", (event) => {
   $("#drawing-canvas").style.width = `${512 * zoom}px`;
   $("#drawing-canvas").style.height = `${512 * zoom}px`;
   $("#drawing-zoom-value").value = `${Math.round(zoom * 100)}%`;
-});
-$("#drawing-filename").addEventListener("change", (event) => {
-  const filename = event.target.value.trim();
-  if (!filename || /[\\/:*?"<>|]/.test(filename)) { event.target.value = drawing.filename; setDrawingStatus("drawingNameInvalid"); return; }
-  drawing.filename = filename.toLowerCase().endsWith(".svg") ? filename : `${filename}.svg`;
-  persistDrawing();
-  renderDrawing();
 });
 $("#drawing-save").addEventListener("click", () => saveDrawing());
 $("#drawing-save-as").addEventListener("click", () => saveDrawing(true));
