@@ -15,6 +15,9 @@ button, input, select, textarea { font: inherit; }
 button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, label.button:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 .layout { width: min(1400px, 100%); margin: 0 auto; }
 .topbar { display: flex; justify-content: space-between; align-items: start; gap: 20px; margin-bottom: 16px; }
+.topbar-actions { display: flex; align-items: start; gap: 12px; }
+.hub-button { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; white-space: nowrap; text-decoration: none; }
+.hub-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .eyebrow { margin: 0 0 3px; color: var(--accent); font-size: .72rem; font-weight: 750; letter-spacing: .09em; }
 h1, h2, p { margin-top: 0; }
 h1 { margin-bottom: 5px; font-size: clamp(1.45rem, 3vw, 1.9rem); }
@@ -99,5 +102,5 @@ input[type="search"] { margin-top: 0; }
 .dialog-actions { display: flex; justify-content: end; gap: 8px; margin-top: 16px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
 @media (max-width: 900px) { .workspace { grid-template-columns: minmax(190px, .7fr) minmax(280px, 1fr); } .preview-pane { grid-column: 1 / -1; } }
-@media (max-width: 600px) { body { padding: 12px; } .topbar { flex-direction: column; } .language-control { width: 100%; } .workspace { grid-template-columns: 1fr; } .preview-pane { grid-column: auto; } .panel { padding: 13px; } }
+@media (max-width: 600px) { body { padding: 12px; } .topbar { flex-direction: column; } .topbar-actions { width: 100%; justify-content: space-between; align-items: end; } .language-control { width: min(180px, 55%); } .workspace { grid-template-columns: 1fr; } .preview-pane { grid-column: auto; } .panel { padding: 13px; } }
 @media (max-width: 600px) { .drawing-toolbar-actions { flex-wrap: wrap; overflow: visible; } .drawing-style .zoom-control { grid-template-columns: auto minmax(70px, 1fr) auto; flex: 1 1 100%; } .drawing-canvas-wrap { min-height: 220px; padding: 8px; } }

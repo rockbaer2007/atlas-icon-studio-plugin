@@ -51,8 +51,11 @@ for (const required of ["createIconsetSource", "atlas-icon-studio-icons-v1", "DO
   if (!app.includes(required)) throw new Error(`Icon Studio is missing ${required}.`);
 }
 const html = await readFile(path.join(pluginDir, "index.html"), "utf8");
-for (const required of ["drawing-fill-transparent", "drawing-export-dialog", "drawing-duplicate", "drawing-forward", "drawing-backward", "drawing-save", "drawing-save-as", "drawing-toolbar-actions", "class=\"button secondary icon-button", "data-tool=\"pen\"", "data-tool=\"text\""]) {
+for (const required of ["href=\"../../hub\"", "backToHub", "drawing-fill-transparent", "drawing-export-dialog", "drawing-duplicate", "drawing-forward", "drawing-backward", "drawing-save", "drawing-save-as", "drawing-toolbar-actions", "class=\"button secondary icon-button", "data-tool=\"pen\"", "data-tool=\"text\""]) {
   if (!html.includes(required)) throw new Error(`Icon Studio editor UI is missing ${required}.`);
+}
+for (const label of ["Zurück zum Hub", "Back to Hub", "Retour au hub"]) {
+  if (!app.includes(label)) throw new Error(`Icon Studio is missing the Hub button translation: ${label}.`);
 }
 if ((html.match(/class="button [^"]*icon-button[^"]*"/g) ?? []).length < 15) throw new Error("Icon Studio toolbar buttons must use SVG icon controls.");
 console.log(`Validated ${manifest.name} ${manifest.version}.`);
