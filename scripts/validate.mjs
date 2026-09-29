@@ -54,7 +54,7 @@ const html = await readFile(path.join(pluginDir, "index.html"), "utf8");
 for (const required of ["href=\"../../hub\"", "backToHub", "class=\"language-toggle\"", "data-language=\"de\"", "data-language=\"en\"", "data-language=\"fr\"", "drawing-fill-transparent", "drawing-export-dialog", "drawing-duplicate", "drawing-forward", "drawing-backward", "drawing-save", "drawing-save-as", "drawing-toolbar-actions", "class=\"button secondary icon-button", "data-tool=\"pen\"", "data-tool=\"text\""]) {
   if (!html.includes(required)) throw new Error(`Icon Studio editor UI is missing ${required}.`);
 }
-for (const label of ["Zurück zum Hub", "Back to Hub", "Retour au hub"]) {
+for (const label of ["Plugin Hub"]) {
   if (!app.includes(label)) throw new Error(`Icon Studio is missing the Hub button translation: ${label}.`);
 }
 if ((html.match(/class="button [^"]*icon-button[^"]*"/g) ?? []).length < 15) throw new Error("Icon Studio toolbar buttons must use SVG icon controls.");
