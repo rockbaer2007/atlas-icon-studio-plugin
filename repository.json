@@ -7,7 +7,7 @@
   "name": "ATLAS Icon Studio Plugin Repository",
   "version": "1",
   "homepage": "https://github.com/rockbaer2007/atlas-icon-studio-plugin",
-  "installPage": "https://rockbaer2007.github.io/atlas-icon-studio-plugin/install.html",
+  "installPage": "https://github.com/rockbaer2007/atlas-icon-studio-plugin#home-assistant-atlas-icon-set",
   "maintainer": "UGSo Software",
   "plugins": [
     {
@@ -30,7 +30,7 @@
         "fr": "Créer et prévisualiser des jeux d’icônes et des fichiers image pour Home Assistant."
       },
       "homepage": "https://github.com/rockbaer2007/atlas-icon-studio-plugin",
-      "installPage": "https://rockbaer2007.github.io/atlas-icon-studio-plugin/install.html",
+      "installPage": "https://github.com/rockbaer2007/atlas-icon-studio-plugin#home-assistant-atlas-icon-set",
       "icon": "./plugins/icon-studio/icon.svg",
       "logo": "./plugins/icon-studio/logo.svg",
       "preview": "./plugins/icon-studio/preview.svg",
