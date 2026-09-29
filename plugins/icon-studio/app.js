@@ -347,6 +347,7 @@ const iconViewBoxInput = $("#icon-viewbox");
 const iconPreview = $("#icon-preview");
 const statusNode = $("#status");
 const drawingStatusNode = $("#drawing-status");
+const languageButtons = [...document.querySelectorAll("[data-language]")];
 
 function safeStorageGet(key) {
   try { return localStorage.getItem(key); } catch { return null; }
@@ -598,7 +599,9 @@ function setLanguage(language) {
   document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
     element.setAttribute("aria-label", dictionary()[element.dataset.i18nAria] ?? "");
   });
-  $("#language").value = currentLanguage;
+  languageButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.language === currentLanguage));
+  });
   renderIconList();
 }
 
@@ -881,10 +884,10 @@ async function importCollection(file) {
   }
 }
 
-$("#language").addEventListener("change", (event) => {
-  safeStorageSet(LANGUAGE_KEY, event.target.value);
-  setLanguage(event.target.value);
-});
+languageButtons.forEach((button) => button.addEventListener("click", () => {
+  safeStorageSet(LANGUAGE_KEY, button.dataset.language);
+  setLanguage(button.dataset.language);
+}));
 $("#search-icons").addEventListener("input", renderIconList);
 $("#new-icon").addEventListener("click", createNewIcon);
 $("#delete-icon").addEventListener("click", deleteActiveIcon);
