@@ -10,6 +10,15 @@ export function isValidIconName(name) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name);
 }
 
+export function suggestIconName(filename, existingIcons = {}) {
+  const stem = String(filename).replace(/\.[^.]+$/, "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
+  const base = stem.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "icon";
+  let name = base;
+  let suffix = 2;
+  while (Object.hasOwn(existingIcons, name)) name = `${base}-${suffix++}`;
+  return name;
+}
+
 export function validateIconDefinition(icon) {
   if (!icon || typeof icon.path !== "string" || !icon.path.trim() || !SVG_PATH_CHARS.test(icon.path)) {
     throw new TypeError("Icon path must contain SVG path commands only.");

@@ -8,6 +8,7 @@ import {
   isValidIconName,
   parseCollectionBackup,
   SAMPLE_ICONS,
+  suggestIconName,
   validateIconCollection,
   validateIconDefinition,
 } from "../plugins/icon-studio/iconset-core.js";
@@ -26,6 +27,13 @@ test("accepts stable names and rejects unsafe or malformed names", () => {
   for (const name of ["", "Home", "a:b", "../home", "two--words", "a_b"]) {
     assert.equal(isValidIconName(name), false, name);
   }
+});
+
+test("suggests a safe unique icon name from an imported filename", () => {
+  assert.equal(suggestIconName("agent-dvr.svg"), "agent-dvr");
+  assert.equal(suggestIconName("Über Kamera.PNG"), "uber-kamera");
+  assert.equal(suggestIconName("!!!.svg"), "icon");
+  assert.equal(suggestIconName("agent-dvr.svg", { "agent-dvr": home }), "agent-dvr-2");
 });
 
 test("validates SVG path syntax and a finite positive viewBox", () => {

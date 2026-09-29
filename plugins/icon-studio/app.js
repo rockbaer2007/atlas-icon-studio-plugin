@@ -4,6 +4,7 @@ import {
   createSvgSource,
   isValidIconName,
   parseCollectionBackup,
+  suggestIconName,
   validateIconCollection,
   validateIconDefinition,
 } from "./iconset-core.js";
@@ -44,7 +45,7 @@ const translations = {
     invalidName: "Nur Kleinbuchstaben, Zahlen und einzelne Bindestriche sind erlaubt.",
     duplicateName: "Dieser Iconname wird bereits verwendet.",
     invalidPath: "SVG-Pfaddaten oder Ansichtsbereich sind ungültig.",
-    invalidSvg: "Nicht unterstütztes SVG. Erlaubt sind einfache Gruppen und Pfade ohne Skripte, CSS, Verweise oder Transformationen.",
+    invalidSvg: "SVG nicht importiert. Unterstützt werden einfache Gruppen und Pfade; CSS, Farben und Verläufe werden entfernt. Externe Verweise und Transformationen werden abgelehnt.",
     svgLoaded: "SVG importiert und der Sammlung hinzugefügt.",
     batchImported: "{count} SVG-Dateien zur Sammlung hinzugefügt.",
     batchTooMany: "Maximal 50 SVG-Dateien und 20 MiB pro Import auswählen.",
@@ -98,7 +99,7 @@ const translations = {
     invalidName: "Use lowercase letters, numbers and single hyphens only.",
     duplicateName: "That icon name is already in use.",
     invalidPath: "The SVG path data or viewBox is invalid.",
-    invalidSvg: "Unsupported SVG. Simple groups and paths are allowed; scripts, CSS, references and transforms are not.",
+    invalidSvg: "SVG was not imported. Simple groups and paths are supported; CSS, colors and gradients are stripped. External references and transforms are rejected.",
     svgLoaded: "SVG imported and added to the collection.",
     batchImported: "Added {count} SVG files to the collection.",
     batchTooMany: "Select at most 50 SVG files and 20 MiB per import.",
@@ -152,7 +153,7 @@ const translations = {
     invalidName: "Utilisez uniquement des minuscules, des chiffres et des tirets simples.",
     duplicateName: "Ce nom d’icône est déjà utilisé.",
     invalidPath: "Les données du chemin SVG ou le viewBox ne sont pas valides.",
-    invalidSvg: "SVG non pris en charge. Les groupes simples et les chemins sont acceptés, sans scripts, CSS, références ou transformations.",
+    invalidSvg: "SVG non importé. Les groupes simples et les chemins sont acceptés ; le CSS, les couleurs et les dégradés sont supprimés. Les références externes et les transformations sont refusées.",
     svgLoaded: "SVG importé et ajouté à la collection.",
     batchImported: "{count} fichiers SVG ajoutés à la collection.",
     batchTooMany: "Sélectionnez au maximum 50 fichiers SVG et 20 Mio par importation.",
@@ -379,15 +380,17 @@ function parseSvg(text) {
   const documentNode = new DOMParser().parseFromString(text, "image/svg+xml");
   const root = documentNode.documentElement;
   if (root.localName !== "svg" || documentNode.querySelector("parsererror")) throw new Error("Invalid XML");
-  const allowed = new Set(["svg", "g", "path"]);
+  const allowed = new Set(["svg", "g", "path", "defs", "style", "linearGradient", "radialGradient", "stop", "title", "desc", "metadata"]);
   const nodes = [root, ...root.querySelectorAll("*")];
-  if (documentNode.doctype || nodes.some((node) => !allowed.has(node.localName) && !["title", "desc"].includes(node.localName))) throw new Error("Unsupported SVG element");
-  if (nodes.some((node) => node.hasAttribute("transform") || [...node.attributes].some(({ name, value }) =>
-    /^on/i.test(name) || ["href", "style", "class"].includes(name.toLowerCase()) ||
-    (!name.toLowerCase().startsWith("xmlns") && /url\s*\(|https?:|data:/i.test(value))))) {
+  if (documentNode.doctype || nodes.some((node) => !allowed.has(node.localName))) throw new Error("Unsupported SVG element");
+  if (nodes.some((node) => node.hasAttribute("transform") || [...node.attributes].some(({ name }) =>
+    /^on/i.test(name) || ["href", "src"].includes(name.toLowerCase())))) {
     throw new Error("Unsafe or transformed SVG");
   }
-  const paths = [...root.querySelectorAll("path")].map((path) => path.getAttribute("d")).filter(Boolean);
+  const paths = [...root.querySelectorAll("path")]
+    .filter((path) => !path.closest("defs"))
+    .map((path) => path.getAttribute("d"))
+    .filter(Boolean);
   if (!paths.length) throw new Error("No path elements");
   const viewBox = root.getAttribute("viewBox") ?? "0 0 24 24";
   return validateIconDefinition({ path: paths.join(" "), viewBox });
@@ -410,15 +413,6 @@ async function importSvg(file, requestedName = iconNameInput.value.trim()) {
     announce("invalidSvg");
     return false;
   }
-}
-
-function nameFromFilename(filename) {
-  const stem = filename.replace(/\.[^.]+$/, "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
-  const base = stem.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "icon";
-  let name = base;
-  let suffix = 2;
-  while (icons[name]) name = `${base}-${suffix++}`;
-  return name;
 }
 
 function showImage(file) {
@@ -489,10 +483,10 @@ $("#svg-file").addEventListener("change", (event) => {
     event.target.value = "";
     return;
   }
-  if (files.length === 1) void importSvg(files[0]).then((loaded) => { if (loaded) announce("svgLoaded"); });
+  if (files.length === 1) void importSvg(files[0], suggestIconName(files[0].name, icons)).then((loaded) => { if (loaded) announce("svgLoaded"); });
   else if (files.length > 1) void (async () => {
     let loaded = 0;
-    for (const file of files) if (await importSvg(file, nameFromFilename(file.name))) loaded += 1;
+    for (const file of files) if (await importSvg(file, suggestIconName(file.name, icons))) loaded += 1;
     announce("batchImported", { count: loaded });
   })();
   event.target.value = "";
