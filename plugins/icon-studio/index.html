@@ -13,9 +13,9 @@
         <div>
           <p class="eyebrow" data-i18n="eyebrow">ATLAS PLUGIN</p>
           <h1 data-i18n="title">ATLAS Icon Studio</h1>
-          <p class="intro" data-i18n="intro">Icons ansehen, SVG-Pfade vorbereiten und ein Home-Assistant-Iconset mit dem Präfix atlas: exportieren.</p>
+          <p class="intro" data-i18n="intro">Icons erstellen, als Set verwalten und mit dem Präfix atlas: in Home Assistant nutzen.</p>
         </div>
-        <label class="language-control">Sprache
+        <label class="language-control" for="language"><span data-i18n="language">Sprache</span>
           <select id="language" aria-label="Language">
             <option value="de">Deutsch</option>
             <option value="en">English</option>
@@ -24,36 +24,65 @@
         </label>
       </header>
 
-      <section class="workspace" aria-label="Icon editor">
-        <div class="editor-pane">
-          <p class="eyebrow" data-i18n="sample">Beispiel</p>
-          <h2 data-i18n="home">Home-Icon</h2>
-          <label for="icon-name" data-i18n="iconName">Iconname</label>
-          <input id="icon-name" value="home" maxlength="48" autocomplete="off">
+      <section class="workspace">
+        <aside class="library-pane panel" aria-labelledby="library-title">
+          <div class="section-heading">
+            <h2 id="library-title" data-i18n="library">Icon-Sammlung</h2>
+            <span id="icon-count" class="count">0</span>
+          </div>
+          <label class="visually-hidden" for="search-icons" data-i18n="search">Icons suchen</label>
+          <input id="search-icons" type="search" data-i18n-placeholder="search" placeholder="Icons suchen">
+          <div id="icon-list" class="icon-list" role="listbox" aria-label="Icon collection"></div>
+          <button id="new-icon" class="button secondary full-width" type="button" data-i18n="newIcon">Neues Icon</button>
+          <button id="delete-icon" class="button danger full-width" type="button" data-i18n="deleteIcon">Icon löschen</button>
+          <button id="export-collection" class="button secondary full-width" type="button" data-i18n="exportCollection">Sammlung sichern</button>
+          <label class="button secondary full-width" for="collection-file" data-i18n="importCollection">Sammlung importieren</label>
+          <input id="collection-file" class="visually-hidden" type="file" accept="application/json,.json">
           <div class="file-actions">
-            <label class="button secondary" for="svg-file" data-i18n="svgFile">SVG importieren</label>
-            <input id="svg-file" class="visually-hidden" type="file" accept="image/svg+xml,.svg">
-            <label class="button secondary" for="image-file" data-i18n="imageFile">PNG/JPG anzeigen</label>
-            <input id="image-file" class="visually-hidden" type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg">
-          <button id="download-image" class="button secondary" type="button" data-i18n="saveImage" hidden>Bilddatei herunterladen</button>
+            <label class="button secondary" for="svg-file" data-i18n="importSvg">SVG importieren</label>
+            <input id="svg-file" class="visually-hidden" type="file" accept="image/svg+xml,.svg" multiple>
+            <label class="button secondary" for="image-file" data-i18n="viewImage">PNG/JPG ansehen</label>
+            <input id="image-file" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/bmp,image/x-icon,.png,.jpg,.jpeg,.gif,.webp,.bmp,.ico">
           </div>
-          <p class="notice" data-i18n="svgOnly">Für atlas:-Icons werden SVG-Dateien mit einfachen &lt;path&gt;-Elementen unterstützt. PNG/JPG kann hier angesehen und separat gespeichert werden, aber nicht als Vektor-Icon in das Iconset.</p>
-          <button id="download" class="button primary" type="button" data-i18n="download">Iconset-JavaScript herunterladen</button>
-          <p id="status" class="status" role="status" aria-live="polite"></p>
-        </div>
+        </aside>
 
-        <div class="preview-pane">
-          <p class="eyebrow" data-i18n="preview">Vorschau</p>
-          <div id="icon-preview" class="preview" aria-label="Icon preview"></div>
-          <p class="usage-label" data-i18n="usageLabel">Home Assistant-Aufruf</p>
-          <div class="usage-row">
-            <input id="usage" value="atlas:home" readonly aria-label="Icon name for Home Assistant">
-            <button id="copy-usage" class="button secondary" type="button" data-i18n="copy">Verwendung kopieren</button>
+        <section class="editor-pane panel" aria-labelledby="editor-title">
+          <div class="section-heading">
+            <h2 id="editor-title" data-i18n="editIcon">Icon bearbeiten</h2>
+            <span id="status" class="status" role="status" aria-live="polite"></span>
           </div>
-          <p class="notice" data-i18n="hint">atlas:home funktioniert, sobald das exportierte Iconset als Frontend-Ressource in Home Assistant geladen ist.</p>
-        </div>
+          <label for="icon-name" data-i18n="iconName">Iconname</label>
+          <div class="name-row">
+            <span class="prefix">atlas:</span>
+            <input id="icon-name" value="home" maxlength="48" autocomplete="off" spellcheck="false">
+          </div>
+          <p class="field-hint" data-i18n="nameHint">Kleinbuchstaben, Zahlen und Bindestriche verwenden.</p>
+          <label for="icon-viewbox" data-i18n="viewBox">SVG-Ansichtsbereich</label>
+          <input id="icon-viewbox" value="0 0 24 24" spellcheck="false">
+          <label for="icon-path" data-i18n="pathData">SVG-Pfaddaten</label>
+          <textarea id="icon-path" rows="7" spellcheck="false"></textarea>
+          <p class="field-hint" data-i18n="pathHint">Unterstützt werden monochrome SVG-Pfade. Füllfarben aus importierten SVGs werden vereinheitlicht.</p>
+          <button id="download-svg" class="button secondary full-width" type="button" data-i18n="downloadSvg">Aktuelles Icon als SVG speichern</button>
+        </section>
+
+        <aside class="preview-pane panel" aria-labelledby="preview-title">
+          <h2 id="preview-title" data-i18n="preview">Vorschau</h2>
+          <div id="icon-preview" class="preview" aria-label="Icon preview"></div>
+          <div id="image-preview" class="image-preview" hidden>
+            <img id="preview-image" alt="">
+            <button id="download-image" class="button secondary full-width" type="button" data-i18n="saveImage">Bilddatei herunterladen</button>
+          </div>
+          <p class="usage-label" data-i18n="haUsage">Home-Assistant-Aufruf</p>
+          <div class="usage-row">
+            <input id="usage" value="atlas:home" readonly aria-label="Home Assistant icon name">
+            <button id="copy-usage" class="button secondary" type="button" data-i18n="copy">Kopieren</button>
+          </div>
+          <button id="download-set" class="button primary full-width" type="button" data-i18n="downloadSet">Iconset exportieren</button>
+          <p class="notice" data-i18n="haHint">Das exportierte JavaScript als Frontend-Ressource in Home Assistant laden, dann funktionieren atlas:-Icons.</p>
+          <p class="notice compact" data-i18n="rasterHint">PNG/JPG und weitere Bildformate werden angezeigt, aber nicht als atlas:-Vektor-Icons exportiert.</p>
+        </aside>
       </section>
     </main>
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>

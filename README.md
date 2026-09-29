@@ -1,6 +1,6 @@
 # ATLAS Icon Studio Plugin Repository
 
-An external ATLAS plugin repository for previewing SVG/PNG/JPEG artwork and creating Home Assistant custom icon-set resources. The included vector icon set registers the `atlas:` namespace, with `atlas:home` as its example.
+An external ATLAS plugin repository for editing and organizing monochrome SVG icons, previewing common image files, and creating Home Assistant custom icon-set resources. The included vector icon set registers the `atlas:` namespace, with `atlas:home` as its example.
 
 ## Install in ATLAS
 
@@ -19,10 +19,10 @@ npm run build
 npm run check
 ```
 
-The builder synchronizes `repository.json` and the generated install package from the plugin manifest. Run it after each version change.
+The builder synchronizes `repository.json` and the generated install package from the plugin manifest. Run it after each version change. `npm test` verifies icon validation and generated icon-set behavior.
 
 ## Home Assistant `atlas:` icon set
 
-The plugin exports `atlas-iconset.js`. Copy it to `/config/www/atlas-iconset.js`, add `/local/atlas-iconset.js` as a JavaScript module resource in **Settings → Dashboards → Resources**, and reload the Home Assistant frontend. The included sample can then be referenced as `atlas:home`.
+The plugin keeps the icon collection in this browser, lets you add, rename, search, edit and remove icons, import several SVGs at once, and back up or restore the collection as JSON. It exports both individual SVGs and the entire icon set. It exports `atlas-iconset.js`; copy it to `/config/www/atlas-iconset.js`, add `/local/atlas-iconset.js` as a JavaScript module resource in **Settings → Dashboards → Resources**, and reload the Home Assistant frontend. The included samples can then be referenced as `atlas:home`, `atlas:lightbulb` and `atlas:thermometer`.
 
-This first version supports SVG icons made from simple path data. PNG and JPEG are previewed as normal images and remain useful as dashboard image assets, but they cannot be returned by Home Assistant's custom icon-set API as vector icons. See [`plugins/icon-studio/README.md`](plugins/icon-studio/README.md) for setup and format limits.
+SVG imports accept simple path elements without scripts, external references, styles or transforms. PNG, JPEG, GIF, WebP, BMP and ICO are previewed and downloadable as ordinary images; Home Assistant's custom icon-set API requires SVG vector paths and does not return raster files as `atlas:` icons. See [`plugins/icon-studio/README.md`](plugins/icon-studio/README.md) for setup and format limits.

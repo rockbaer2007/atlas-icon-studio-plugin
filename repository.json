@@ -22,12 +22,12 @@
         "en": "ATLAS Icon Studio",
         "fr": "ATLAS Icon Studio"
       },
-      "version": "0.1.0",
-      "description": "Create and preview Home Assistant icon sets and image assets.",
+      "version": "0.1.1",
+      "description": "Create, preview and export Home Assistant custom SVG icon sets and image assets.",
       "descriptionI18n": {
-        "de": "Home-Assistant-Iconsets und Bilddateien erstellen und anzeigen.",
-        "en": "Create and preview Home Assistant icon sets and image assets.",
-        "fr": "Créer et prévisualiser des jeux d’icônes et des fichiers image pour Home Assistant."
+        "de": "Home-Assistant-SVG-Iconsets und Bilddateien erstellen, anzeigen und exportieren.",
+        "en": "Create, preview and export Home Assistant custom SVG icon sets and image assets.",
+        "fr": "Créer, prévisualiser et exporter des jeux d’icônes SVG personnalisés et des images pour Home Assistant."
       },
       "homepage": "https://github.com/rockbaer2007/atlas-icon-studio-plugin",
       "installPage": "https://github.com/rockbaer2007/atlas-icon-studio-plugin#home-assistant-atlas-icon-set",

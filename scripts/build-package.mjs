@@ -13,6 +13,7 @@ const files = [
   ["index.html", "text/html"],
   ["styles.css", "text/css"],
   ["app.js", "text/javascript"],
+  ["iconset-core.js", "text/javascript"],
   ["icon.svg", "image/svg+xml"],
   ["logo.svg", "image/svg+xml"],
   ["preview.svg", "image/svg+xml"],
