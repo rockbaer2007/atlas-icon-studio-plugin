@@ -101,6 +101,7 @@ const translations = {
     svgLoaded: "SVG importiert und der Sammlung hinzugefügt.",
     batchImported: "{count} SVG-Dateien zur Sammlung hinzugefügt.",
     batchTooMany: "Maximal 50 SVG-Dateien und 20 MiB pro Import auswählen.",
+    storageFailed: "Die Icon-Sammlung konnte nicht dauerhaft gespeichert werden. Exportiere zur Sicherheit ein Backup und prüfe den Browserspeicher.",
     svgTooLarge: "Die SVG-Datei ist zu groß (maximal 2 MiB).",
     imageLoaded: "Bild geladen. Es kann separat heruntergeladen werden.",
     transferFailed: "Datei aus File Studio konnte nicht geöffnet werden. Prüfe, ob sie noch freigegeben und Icon Studio installiert ist.",
@@ -207,6 +208,7 @@ const translations = {
     svgLoaded: "SVG imported and added to the collection.",
     batchImported: "Added {count} SVG files to the collection.",
     batchTooMany: "Select at most 50 SVG files and 20 MiB per import.",
+    storageFailed: "The icon collection could not be saved persistently. Export a backup and check browser storage.",
     svgTooLarge: "The SVG file is too large (maximum 2 MiB).",
     imageLoaded: "Image loaded. You can download it separately.",
     transferFailed: "Could not open the file from File Studio. Check that it is still accessible and Icon Studio is installed.",
@@ -313,6 +315,7 @@ const translations = {
     svgLoaded: "SVG importé et ajouté à la collection.",
     batchImported: "{count} fichiers SVG ajoutés à la collection.",
     batchTooMany: "Sélectionnez au maximum 50 fichiers SVG et 20 Mio par importation.",
+    storageFailed: "La collection n’a pas pu être enregistrée durablement. Exportez une sauvegarde et vérifiez le stockage du navigateur.",
     svgTooLarge: "Le fichier SVG est trop volumineux (maximum 2 Mio).",
     imageLoaded: "Image chargée. Vous pouvez la télécharger séparément.",
     transferFailed: "Impossible d’ouvrir le fichier de File Studio. Vérifiez qu’il est toujours accessible et qu’Icon Studio est installé.",
@@ -337,6 +340,10 @@ const DEFAULT_ICONS = {
   thermometer: { path: "M14 14.76V5a2 2 0 1 0-4 0v9.76a4 4 0 1 0 4 0zM12 20a2 2 0 0 1-1-3.73V5a1 1 0 1 1 2 0v11.27A2 2 0 0 1 12 20z", viewBox: "0 0 24 24" },
 };
 const STORAGE_KEY = "atlas-icon-studio-icons-v1";
+const ICON_DATABASE_NAME = "atlas-icon-studio";
+const ICON_DATABASE_VERSION = 1;
+const ICON_STORE_NAME = "collections";
+const ICON_STORE_KEY = "icons";
 const LANGUAGE_KEY = "atlas-icon-studio-language";
 const FILE_STUDIO_TRANSFER_PREFIX = "atlas.file-studio.icon-studio-transfer.v1.";
 const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
@@ -361,17 +368,75 @@ function safeStorageSet(key, value) {
   try { localStorage.setItem(key, value); } catch { /* Storage may be disabled by browser policy. */ }
 }
 
-function loadIcons() {
+function loadLegacyIcons() {
   try {
     const saved = JSON.parse(safeStorageGet(STORAGE_KEY) ?? "null");
     const valid = validateIconCollection(saved);
-    return { ...DEFAULT_ICONS, ...valid };
+    return valid;
   } catch {
-    return structuredClone(DEFAULT_ICONS);
+    return null;
   }
 }
 
-let icons = loadIcons();
+function openIconDatabase() {
+  return new Promise((resolve, reject) => {
+    if (!("indexedDB" in window)) { reject(new Error("IndexedDB is unavailable")); return; }
+    const request = indexedDB.open(ICON_DATABASE_NAME, ICON_DATABASE_VERSION);
+    request.onupgradeneeded = () => {
+      if (!request.result.objectStoreNames.contains(ICON_STORE_NAME)) {
+        request.result.createObjectStore(ICON_STORE_NAME);
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error ?? new Error("Could not open icon database"));
+  });
+}
+
+function readStoredIcons(database) {
+  return new Promise((resolve, reject) => {
+    const request = database.transaction(ICON_STORE_NAME, "readonly").objectStore(ICON_STORE_NAME).get(ICON_STORE_KEY);
+    request.onsuccess = () => resolve(request.result ?? null);
+    request.onerror = () => reject(request.error ?? new Error("Could not read icon database"));
+  });
+}
+
+function writeStoredIcons(database, collection) {
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(ICON_STORE_NAME, "readwrite");
+    transaction.objectStore(ICON_STORE_NAME).put(collection, ICON_STORE_KEY);
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error ?? new Error("Could not write icon database"));
+    transaction.onabort = () => reject(transaction.error ?? new Error("Icon database write was aborted"));
+  });
+}
+
+let iconDatabasePromise;
+function getIconDatabase() {
+  iconDatabasePromise ??= openIconDatabase();
+  return iconDatabasePromise;
+}
+
+async function loadIcons() {
+  try {
+    const database = await getIconDatabase();
+    const stored = await readStoredIcons(database);
+    const legacy = stored ? null : loadLegacyIcons();
+    const loaded = stored ?? legacy;
+    if (loaded) {
+      const valid = validateIconCollection(loaded);
+      if (legacy) await writeStoredIcons(database, valid);
+      try { localStorage.removeItem(STORAGE_KEY); } catch { /* The IndexedDB copy is authoritative. */ }
+      return { ...DEFAULT_ICONS, ...valid };
+    }
+  } catch {
+    const legacy = loadLegacyIcons();
+    if (legacy) return { ...DEFAULT_ICONS, ...legacy };
+  }
+  return structuredClone(DEFAULT_ICONS);
+}
+
+let icons = structuredClone(DEFAULT_ICONS);
+let persistenceQueue = Promise.resolve();
 let activeName = "home";
 let currentImageUrl = null;
 let currentImageFile = null;
@@ -610,7 +675,23 @@ function setLanguage(language) {
 }
 
 function persistIcons() {
-  safeStorageSet(STORAGE_KEY, JSON.stringify(icons));
+  const snapshot = validateIconCollection(icons);
+  persistenceQueue = persistenceQueue.then(async () => {
+    try {
+      await writeStoredIcons(await getIconDatabase(), snapshot);
+      try { localStorage.removeItem(STORAGE_KEY); } catch { /* IndexedDB is authoritative. */ }
+      return true;
+    } catch {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+        return true;
+      } catch {
+        announce("storageFailed");
+        return false;
+      }
+    }
+  });
+  return persistenceQueue;
 }
 
 function makeIconNode(icon, name, size = 28) {
@@ -1187,6 +1268,12 @@ document.addEventListener("keydown", (event) => {
 const requestedLanguage = new URLSearchParams(location.search).get("language");
 const savedLanguage = safeStorageGet(LANGUAGE_KEY);
 setLanguage(translations[requestedLanguage] ? requestedLanguage : translations[savedLanguage] ? savedLanguage : "de");
-selectIcon(activeName);
 renderDrawing();
-void openFileStudioTransfer();
+const iconWorkspace = $(".workspace");
+iconWorkspace.inert = true;
+void (async () => {
+  icons = await loadIcons();
+  iconWorkspace.inert = false;
+  selectIcon(activeName);
+  await openFileStudioTransfer();
+})();
