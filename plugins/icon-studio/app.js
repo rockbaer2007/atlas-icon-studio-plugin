@@ -924,11 +924,19 @@ function deleteActiveIcon() {
   if (activeName === "home") { announce("homeProtected"); return; }
   const names = Object.keys(icons);
   if (names.length < 2) { announce("lastIcon"); return; }
+  const deletedIndex = names.indexOf(activeName);
+  const deletedIcon = icons[activeName];
+  const deletedName = activeName;
   delete icons[activeName];
-  activeName = "home";
-  persistIcons();
-  selectIcon("home");
-  announce("deleted");
+  const remainingNames = Object.keys(icons);
+  const nextName = remainingNames[Math.min(Math.max(0, deletedIndex), remainingNames.length - 1)];
+  selectIcon(nextName);
+  void persistIcons().then((saved) => {
+    if (!saved) {
+      icons[deletedName] = deletedIcon;
+      selectIcon(deletedName);
+    } else announce("deleted");
+  });
 }
 
 function downloadFile(filename, content, type) {
