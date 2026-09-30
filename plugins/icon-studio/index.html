@@ -35,12 +35,14 @@
           </div>
           <label class="visually-hidden" for="search-icons" data-i18n="search">Icons suchen</label>
           <input id="search-icons" type="search" data-i18n-placeholder="search" placeholder="Icons suchen">
-          <div id="icon-list" class="icon-list" role="listbox" aria-label="Icon collection"></div>
+          <div id="icon-list" class="icon-list" role="listbox" tabindex="0" aria-label="Icon collection"></div>
           <button id="new-icon" class="button secondary full-width" type="button" data-i18n="newIcon">Neues Icon</button>
           <button id="delete-icon" class="button danger full-width" type="button" data-i18n="deleteIcon">Icon löschen</button>
           <button id="export-collection" class="button secondary full-width" type="button" data-i18n="exportCollection">Sammlung sichern</button>
           <label class="button secondary full-width" for="collection-file" data-i18n="importCollection">Sammlung importieren</label>
-          <input id="collection-file" class="visually-hidden" type="file" accept="application/json,.json">
+          <input id="collection-file" class="visually-hidden" type="file" accept="application/json,.json,application/javascript,.js">
+          <button id="ha-read-iconset" class="button secondary full-width" type="button" data-i18n="haRead">Iconset aus Home Assistant einlesen</button>
+          <button id="ha-save-iconset" class="button secondary full-width" type="button" data-i18n="haSave">In Home Assistant speichern</button>
           <div class="file-actions">
             <label class="button secondary" for="svg-file" data-i18n="importSvg">SVG importieren</label>
             <input id="svg-file" class="visually-hidden" type="file" accept="image/svg+xml,.svg" multiple>
@@ -59,7 +61,7 @@
             <span class="prefix">atlas:</span>
             <input id="icon-name" value="home" maxlength="48" autocomplete="off" spellcheck="false">
           </div>
-          <p class="field-hint" data-i18n="nameHint">Kleinbuchstaben, Zahlen und Bindestriche verwenden.</p>
+          <p id="icon-name-hint" class="field-hint" data-i18n="nameHint" aria-live="polite">Kleinbuchstaben, Zahlen und Bindestriche verwenden.</p>
           <label for="icon-viewbox" data-i18n="viewBox">SVG-Ansichtsbereich</label>
           <input id="icon-viewbox" value="0 0 24 24" spellcheck="false">
           <label for="icon-path" data-i18n="pathData">SVG-Pfaddaten</label>
@@ -141,6 +143,33 @@
         </div>
         <p class="notice compact" data-i18n="drawingDestination">Die SVG wird heruntergeladen. Farbige Grafiken gehören nicht zum monochromen atlas:-Iconset.</p>
       </section>
+      <dialog id="import-conflict-dialog" class="export-dialog">
+        <form id="import-conflict-form" method="dialog">
+          <h2 data-i18n="importConflictTitle">Namenskonflikte beim Import</h2>
+          <p id="import-conflict-prompt"></p>
+          <label for="import-conflict-mode" data-i18n="conflictMode">Behandlung</label>
+          <select id="import-conflict-mode">
+            <option value="rename" data-i18n="conflictRename">Neue Icons automatisch umbenennen</option>
+            <option value="skip" data-i18n="conflictSkip">Vorhandene Icons überspringen</option>
+            <option value="replace" data-i18n="conflictReplace">Vorhandene Icons ersetzen</option>
+          </select>
+          <div class="dialog-actions">
+            <button id="import-conflict-cancel" class="button secondary" type="submit" value="cancel" data-i18n="importCancel">Abbrechen</button>
+            <button class="button primary" type="submit" value="apply" data-i18n="importApply">Importieren</button>
+          </div>
+        </form>
+      </dialog>
+      <dialog id="ha-save-dialog" class="export-dialog">
+        <form id="ha-save-form" method="dialog">
+          <h2 data-i18n="haSaveTitle">Iconset speichern</h2>
+          <p id="ha-save-prompt"></p>
+          <div class="dialog-actions">
+            <button id="ha-save-cancel" class="button secondary" type="button" data-i18n="importCancel">Abbrechen</button>
+            <button id="ha-save-new" class="button secondary" type="button" data-i18n="haNewFile">Neue Datei schreiben</button>
+            <button id="ha-save-replace" class="button primary" type="button" data-i18n="haReplace">Datei ersetzen</button>
+          </div>
+        </form>
+      </dialog>
       <dialog id="drawing-export-dialog" class="export-dialog">
         <form id="drawing-export-form" method="dialog">
           <h2 data-i18n="exportTitle">Export format</h2>

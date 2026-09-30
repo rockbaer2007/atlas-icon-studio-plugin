@@ -7,6 +7,7 @@ import {
   createSvgSource,
   isValidIconName,
   parseCollectionBackup,
+  parseIconsetSource,
   SAMPLE_ICONS,
   suggestIconName,
   validateIconCollection,
@@ -57,6 +58,21 @@ test("exports a loadable Home Assistant atlas icon set with every icon", async (
   assert.equal(JSON.stringify(await sandbox.window.customIconsets.atlas("home")), JSON.stringify(home));
   assert.equal(JSON.stringify(await sandbox.window.customIconsets.atlas("lamp")), JSON.stringify({ path: "M4 4h16v16H4z", viewBox: "0 0 24 24" }));
   assert.equal(await sandbox.window.customIconsets.atlas("missing"), undefined);
+});
+
+test("imports only Icon Studio generated JavaScript icon sets safely", () => {
+  const collection = { home, lamp: { path: "M4 4h16v16H4z", viewBox: "0 0 24 24" } };
+  assert.deepEqual(parseIconsetSource(createIconsetSource(collection)), collection);
+  assert.throws(() => parseIconsetSource('window.customIconsets.atlas = () => { alert("no"); };'), /Unsupported/);
+  assert.throws(() => parseIconsetSource(`${createIconsetSource(collection)}\nalert("no");`), /Unsupported/);
+  assert.throws(() => parseIconsetSource(createIconsetSource({ "invalid name": home })), /Invalid icon name/);
+});
+
+test("round-trips icon sets with more than two thousand entries without a count limit", () => {
+  const manyIcons = Object.fromEntries(Array.from({ length: 2100 }, (_, index) => [`icon-${index + 1}`, home]));
+  const restored = parseIconsetSource(createIconsetSource(manyIcons));
+  assert.equal(Object.keys(restored).length, 2100);
+  assert.deepEqual(restored["icon-2100"], home);
 });
 
 test("exports a standalone SVG document with escaped label text", () => {

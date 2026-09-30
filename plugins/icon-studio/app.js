@@ -4,6 +4,7 @@ import {
   createSvgSource,
   isValidIconName,
   parseCollectionBackup,
+  parseIconsetSource,
   suggestIconName,
   validateIconCollection,
   validateIconDefinition,
@@ -117,6 +118,30 @@ const translations = {
     emptySearch: "Keine passenden Icons.",
     selectIcon: "Icon auswählen",
     count: "{count} Icons",
+    duplicateNameHint: "Dieser Name ist bereits vorhanden. Wähle einen freien Namen.",
+    nameAvailableHint: "Kleinbuchstaben, Zahlen und Bindestriche verwenden.",
+    importConflictTitle: "Namenskonflikte beim Import",
+    importConflictPrompt: "{count} Namen sind bereits vorhanden. Wie sollen diese behandelt werden?",
+    conflictMode: "Behandlung",
+    conflictReplace: "Vorhandene Icons ersetzen",
+    conflictSkip: "Vorhandene Icons überspringen",
+    conflictRename: "Neue Icons automatisch umbenennen",
+    importApply: "Importieren",
+    importCancel: "Abbrechen",
+    haRead: "Iconset aus Home Assistant einlesen",
+    haSave: "In Home Assistant speichern",
+    haSaveTitle: "Iconset speichern",
+    haExisting: "{count} Icons in /config/www/atlas-iconset.js gefunden. Beim Ersetzen wird automatisch eine Sicherung erstellt. Datei ersetzen oder neue Datei schreiben?",
+    haExistingUnknown: "Die Datei /config/www/atlas-iconset.js ist vorhanden, enthält aber kein unterstütztes Iconset. Beim Ersetzen wird automatisch eine Sicherung erstellt. Ersetzen oder neue Datei schreiben?",
+    haReplace: "Datei ersetzen",
+    haNewFile: "Neue Datei schreiben",
+    haNewSaved: "Neue Datei gespeichert: {path}. Als Ressource in Home Assistant hinzufügen: {url}",
+    haReplaced: "Iconset gespeichert. Sicherung erstellt: {backup}",
+    haSaved: "Iconset in Home Assistant gespeichert.",
+    haFileRead: "{count} Icons aus Home Assistant eingelesen.",
+    haAccessError: "Home-Assistant-Dateizugriff fehlgeschlagen: {message}",
+    haUnsupported: "Die Datei ist kein unterstütztes, von Icon Studio erzeugtes Iconset.",
+    haUploadTooLarge: "Das Iconset überschreitet das File-Studio-Uploadlimit von 64 MiB.",
   },
   en: {
     drawingTitle: "Draw a graphic",
@@ -224,6 +249,30 @@ const translations = {
     emptySearch: "No matching icons.",
     selectIcon: "Select icon",
     count: "{count} icons",
+    duplicateNameHint: "This name already exists. Choose a unique name.",
+    nameAvailableHint: "Use lowercase letters, numbers and hyphens.",
+    importConflictTitle: "Import name conflicts",
+    importConflictPrompt: "{count} names already exist. How should they be handled?",
+    conflictMode: "Conflict handling",
+    conflictReplace: "Replace existing icons",
+    conflictSkip: "Skip existing icons",
+    conflictRename: "Rename imported icons automatically",
+    importApply: "Import",
+    importCancel: "Cancel",
+    haRead: "Read icon set from Home Assistant",
+    haSave: "Save to Home Assistant",
+    haSaveTitle: "Save icon set",
+    haExisting: "Found {count} icons in /config/www/atlas-iconset.js. Replacing automatically creates a backup. Replace the file or write a new file?",
+    haExistingUnknown: "The file /config/www/atlas-iconset.js exists, but is not a supported icon set. Replacing automatically creates a backup. Replace it or write a new file?",
+    haReplace: "Replace file",
+    haNewFile: "Write a new file",
+    haNewSaved: "New file saved: {path}. Add it as a Home Assistant resource: {url}",
+    haReplaced: "Icon set saved. Backup created: {backup}",
+    haSaved: "Icon set saved in Home Assistant.",
+    haFileRead: "Read {count} icons from Home Assistant.",
+    haAccessError: "Home Assistant file access failed: {message}",
+    haUnsupported: "This is not a supported Icon Studio generated icon set.",
+    haUploadTooLarge: "The icon set exceeds File Studio's 64 MiB upload limit.",
   },
   fr: {
     drawingTitle: "Dessiner un graphique",
@@ -331,6 +380,30 @@ const translations = {
     emptySearch: "Aucune icône correspondante.",
     selectIcon: "Sélectionner une icône",
     count: "{count} icônes",
+    duplicateNameHint: "Ce nom existe déjà. Choisissez un nom unique.",
+    nameAvailableHint: "Utilisez des minuscules, des chiffres et des tirets.",
+    importConflictTitle: "Conflits de noms lors de l’importation",
+    importConflictPrompt: "{count} noms existent déjà. Comment les traiter ?",
+    conflictMode: "Gestion des conflits",
+    conflictReplace: "Remplacer les icônes existantes",
+    conflictSkip: "Ignorer les icônes existantes",
+    conflictRename: "Renommer automatiquement les icônes importées",
+    importApply: "Importer",
+    importCancel: "Annuler",
+    haRead: "Lire le jeu d’icônes depuis Home Assistant",
+    haSave: "Enregistrer dans Home Assistant",
+    haSaveTitle: "Enregistrer le jeu d’icônes",
+    haExisting: "{count} icônes trouvées dans /config/www/atlas-iconset.js. Le remplacement crée automatiquement une sauvegarde. Remplacer le fichier ou en créer un nouveau ?",
+    haExistingUnknown: "Le fichier /config/www/atlas-iconset.js existe, mais ne contient pas de jeu d’icônes pris en charge. Le remplacement crée automatiquement une sauvegarde. Le remplacer ou en créer un nouveau ?",
+    haReplace: "Remplacer le fichier",
+    haNewFile: "Créer un nouveau fichier",
+    haNewSaved: "Nouveau fichier enregistré : {path}. Ajoutez-le comme ressource Home Assistant : {url}",
+    haReplaced: "Jeu d’icônes enregistré. Sauvegarde créée : {backup}",
+    haSaved: "Jeu d’icônes enregistré dans Home Assistant.",
+    haFileRead: "{count} icônes lues depuis Home Assistant.",
+    haAccessError: "Échec de l’accès aux fichiers Home Assistant : {message}",
+    haUnsupported: "Ce fichier n’est pas un jeu d’icônes généré par Icon Studio pris en charge.",
+    haUploadTooLarge: "Le jeu d’icônes dépasse la limite d’envoi de 64 Mio de File Studio.",
   },
 };
 
@@ -344,6 +417,8 @@ const ICON_DATABASE_NAME = "atlas-icon-studio";
 const ICON_DATABASE_VERSION = 1;
 const ICON_STORE_NAME = "collections";
 const ICON_STORE_KEY = "icons";
+const ICON_LIST_ITEM_HEIGHT = 54;
+const ICON_LIST_WINDOW_SIZE = 24;
 const LANGUAGE_KEY = "atlas-icon-studio-language";
 const FILE_STUDIO_TRANSFER_PREFIX = "atlas.file-studio.icon-studio-transfer.v1.";
 const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
@@ -437,6 +512,7 @@ async function loadIcons() {
 
 let icons = structuredClone(DEFAULT_ICONS);
 let persistenceQueue = Promise.resolve();
+let listNames = [];
 let activeName = "home";
 let currentImageUrl = null;
 let currentImageFile = null;
@@ -710,19 +786,48 @@ function renderIconList() {
   const list = $("#icon-list");
   const query = $("#search-icons").value.trim().toLowerCase();
   const names = Object.keys(icons).filter((name) => name.includes(query)).sort((a, b) => a.localeCompare(b));
+  if (list.dataset.query !== query) list.scrollTop = 0;
+  list.dataset.query = query;
+  listNames = names;
+  const start = Math.max(0, Math.min(
+    Math.max(0, names.length - ICON_LIST_WINDOW_SIZE),
+    Math.floor(list.scrollTop / ICON_LIST_ITEM_HEIGHT) - 4,
+  ));
+  const end = Math.min(names.length, start + ICON_LIST_WINDOW_SIZE);
+  if (list.dataset.windowStart === String(start) && list.dataset.windowEnd === String(end) && list.dataset.renderedCount === String(names.length)) return;
+  list.dataset.windowStart = String(start);
+  list.dataset.windowEnd = String(end);
+  list.dataset.renderedCount = String(names.length);
   list.replaceChildren();
-  for (const name of names) {
+  if (start) {
+    const spacer = document.createElement("div");
+    spacer.className = "icon-list-spacer";
+    spacer.setAttribute("aria-hidden", "true");
+    spacer.style.height = `${Math.max(0, start * ICON_LIST_ITEM_HEIGHT - 6)}px`;
+    list.append(spacer);
+  }
+  for (const [index, name] of names.slice(start, end).entries()) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `icon-entry${name === activeName ? " is-active" : ""}`;
+    button.dataset.iconName = name;
     button.setAttribute("role", "option");
     button.setAttribute("aria-selected", String(name === activeName));
+    button.setAttribute("aria-posinset", String(start + index + 1));
+    button.setAttribute("aria-setsize", String(names.length));
     button.append(makeIconNode(icons[name], name));
     const label = document.createElement("span");
     label.textContent = name;
     button.append(label);
     button.addEventListener("click", () => selectIcon(name));
     list.append(button);
+  }
+  if (end < names.length) {
+    const spacer = document.createElement("div");
+    spacer.className = "icon-list-spacer";
+    spacer.setAttribute("aria-hidden", "true");
+    spacer.style.height = `${Math.max(0, (names.length - end) * ICON_LIST_ITEM_HEIGHT - 6)}px`;
+    list.append(spacer);
   }
   if (!names.length) {
     const empty = document.createElement("p");
@@ -737,6 +842,7 @@ function renderIconList() {
 function selectIcon(name) {
   if (!icons[name]) return;
   activeName = name;
+  renderIconList();
   iconNameInput.value = name;
   iconPathInput.value = icons[name].path;
   iconViewBoxInput.value = icons[name].viewBox;
@@ -744,6 +850,10 @@ function selectIcon(name) {
   iconPreview.replaceChildren(makeIconNode(icons[name], name, 120));
   $("#image-preview").hidden = true;
   $("#icon-preview").hidden = false;
+  const index = listNames.indexOf(name);
+  if (index >= 0 && (index < Number($("#icon-list").dataset.windowStart ?? 0) || index >= Number($("#icon-list").dataset.windowEnd ?? ICON_LIST_WINDOW_SIZE))) {
+    $("#icon-list").scrollTop = index * ICON_LIST_ITEM_HEIGHT;
+  }
   renderIconList();
 }
 
@@ -776,15 +886,19 @@ function renameActiveIcon() {
     return;
   }
   if (!isValidIconName(nextName)) {
-    iconNameInput.value = activeName;
     announce("invalidName");
+    iconNameInput.setAttribute("aria-invalid", "true");
+    $("#icon-name-hint").textContent = dictionary().invalidName;
     return;
   }
   if (nextName !== activeName && icons[nextName]) {
-    iconNameInput.value = activeName;
+    iconNameInput.setAttribute("aria-invalid", "true");
+    $("#icon-name-hint").textContent = dictionary().duplicateNameHint;
     announce("duplicateName");
     return;
   }
+  iconNameInput.removeAttribute("aria-invalid");
+  $("#icon-name-hint").textContent = dictionary().nameHint;
   if (nextName !== activeName) {
     icons[nextName] = icons[activeName];
     delete icons[activeName];
@@ -846,18 +960,22 @@ function parseSvg(text) {
   return validateIconDefinition({ path: paths.join(" "), viewBox });
 }
 
-async function importSvg(file, requestedName = iconNameInput.value.trim()) {
+async function importSvg(file, requestedName = iconNameInput.value.trim(), { persist = true, select = true } = {}) {
   if (file.size > MAX_SVG_SIZE) { announce("svgTooLarge"); return; }
   const name = requestedName;
   if (!isValidIconName(name)) { announce("invalidName"); return; }
   if (name !== activeName && icons[name]) { announce("duplicateName"); return; }
   try {
     const definition = parseSvg(await file.text());
+    const previous = icons[name];
     icons[name] = definition;
-    activeName = name;
-    iconNameInput.value = name;
-    persistIcons();
-    selectIcon(name);
+    if (persist && !(await persistIcons())) {
+      if (previous) icons[name] = previous;
+      else delete icons[name];
+      renderIconList();
+      return false;
+    }
+    if (select) selectIcon(name);
     return true;
   } catch {
     announce("invalidSvg");
@@ -1008,16 +1126,168 @@ function exportCollection() {
 }
 
 async function importCollection(file) {
-  if (file.size > 1024 * 1024) { announce("invalidCollection"); return; }
+  if (file.size > 64 * 1024 * 1024) { announce("invalidCollection"); return; }
   try {
-    const imported = parseCollectionBackup(await file.text());
-    icons = { ...DEFAULT_ICONS, ...imported };
-    activeName = "home";
-    persistIcons();
-    selectIcon(activeName);
-    announce("collectionImported", { count: Object.keys(imported).length });
+    const text = await file.text();
+    const imported = file.name.toLowerCase().endsWith(".js") ? parseIconsetSource(text) : parseCollectionBackup(text);
+    await applyImportedCollection(imported);
   } catch {
     announce("invalidCollection");
+  }
+}
+
+function chooseImportConflictMode(count) {
+  const dialog = $("#import-conflict-dialog");
+  $("#import-conflict-prompt").textContent = format(dictionary().importConflictPrompt, { count });
+  $("#import-conflict-mode").value = "rename";
+  return new Promise((resolve) => {
+    const finish = (mode) => {
+      dialog.removeEventListener("close", onClose);
+      resolve(mode);
+    };
+    const onClose = () => finish(dialog.returnValue === "apply" ? $("#import-conflict-mode").value : null);
+    dialog.addEventListener("close", onClose, { once: true });
+    dialog.showModal();
+  });
+}
+
+async function applyImportedCollection(imported, { quiet = false } = {}) {
+  const conflicts = Object.keys(imported).filter((name) => Object.hasOwn(icons, name));
+  const mode = conflicts.length ? await chooseImportConflictMode(conflicts.length) : "rename";
+  if (!mode) return 0;
+  const previous = icons;
+  const next = { ...icons };
+  let added = 0;
+  let firstImportedName = "";
+  for (const [name, definition] of Object.entries(imported)) {
+    let destination = name;
+    if (Object.hasOwn(next, name)) {
+      if (mode === "skip") continue;
+      if (mode === "rename") destination = suggestIconName(`${name}.svg`, next);
+      next[destination] = definition;
+    } else {
+      next[name] = definition;
+    }
+    firstImportedName ||= destination;
+    added += 1;
+  }
+  icons = next;
+  if (!(await persistIcons())) { icons = previous; renderIconList(); return 0; }
+  selectIcon(firstImportedName || activeName);
+  if (!quiet) announce("collectionImported", { count: added });
+  return added;
+}
+
+async function fileStudioRequest(endpoint, options = {}) {
+  const response = await fetch(createAppUrl(`api/file-studio/${endpoint}`), {
+    cache: "no-store",
+    credentials: "same-origin",
+    headers: { "content-type": "application/json", ...(options.headers ?? {}) },
+    ...options,
+  });
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(body.error ?? body.message ?? `HTTP ${response.status}`);
+    error.status = response.status;
+    throw error;
+  }
+  return body;
+}
+
+async function readHomeAssistantIconset(path = "/config/www/atlas-iconset.js") {
+  const file = await fileStudioRequest(`file?path=${encodeURIComponent(path)}`);
+  const iconsFromFile = parseIconsetSource(file.content ?? "");
+  const added = await applyImportedCollection(iconsFromFile, { quiet: true });
+  if (added) announce("haFileRead", { count: added });
+}
+
+async function nextAvailableIconsetPath() {
+  for (let suffix = 2; suffix <= 1000; suffix += 1) {
+    const path = `/config/www/atlas-iconset${suffix}.js`;
+    try {
+      await fileStudioRequest(`file?path=${encodeURIComponent(path)}`);
+    } catch (error) {
+      if (error.status === 404) return path;
+      throw error;
+    }
+  }
+  throw new Error("No available numbered icon-set filename was found.");
+}
+
+async function writeHomeAssistantIconset(path, source, overwrite) {
+  const filename = path.split("/").pop();
+  const parentPath = path.slice(0, path.lastIndexOf("/"));
+  const response = await fetch(createAppUrl("api/file-studio/upload"), {
+    method: "POST",
+    cache: "no-store",
+    credentials: "same-origin",
+    headers: {
+      "content-type": "application/octet-stream",
+      "x-atlas-upload-parent": encodeURIComponent(parentPath),
+      "x-atlas-upload-name": encodeURIComponent(filename),
+      "x-atlas-upload-overwrite": String(overwrite),
+    },
+    body: new Blob([source], { type: "text/javascript;charset=utf-8" }),
+  });
+  const saved = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(saved.error ?? `HTTP ${response.status}`);
+    error.status = response.status;
+    throw error;
+  }
+  return saved;
+}
+
+async function saveIconsetToHomeAssistant() {
+  try {
+    saveActiveIcon();
+    const source = createIconsetSource(icons);
+    let existing;
+    try {
+      existing = await fileStudioRequest(`file?path=${encodeURIComponent("/config/www/atlas-iconset.js")}`);
+    } catch (error) {
+      if (error.status !== 404) throw error;
+    }
+    if (!existing) {
+      await writeHomeAssistantIconset("/config/www/atlas-iconset.js", source, false);
+      announce("haNewSaved", { path: "/config/www/atlas-iconset.js", url: "/local/atlas-iconset.js" });
+      return;
+    }
+
+    let currentCount;
+    try { currentCount = Object.keys(parseIconsetSource(existing.content ?? "")).length; } catch { /* Preserve unknown files unless replacement is explicitly chosen. */ }
+    $("#ha-save-prompt").textContent = currentCount === undefined
+      ? dictionary().haExistingUnknown
+      : format(dictionary().haExisting, { count: currentCount });
+    const dialog = $("#ha-save-dialog");
+    const choice = await new Promise((resolve) => {
+      const finish = (value) => {
+        dialog.removeEventListener("close", onClose);
+        resolve(value);
+      };
+      const onClose = () => finish(dialog.returnValue || null);
+      dialog.addEventListener("close", onClose, { once: true });
+      $("#ha-save-replace").onclick = () => { dialog.close("replace"); };
+      $("#ha-save-new").onclick = () => { dialog.close("new"); };
+      $("#ha-save-cancel").onclick = () => { dialog.close("cancel"); };
+      dialog.showModal();
+    });
+    if (!choice || choice === "cancel") return;
+
+    if (choice === "replace") {
+      const saved = await writeHomeAssistantIconset(existing.path ?? "/config/www/atlas-iconset.js", source, true);
+      announce("haReplaced", { backup: saved.backup?.name ?? "—" });
+      return;
+    }
+
+    const path = await nextAvailableIconsetPath();
+    const filename = path.split("/").pop();
+    await writeHomeAssistantIconset(path, source, false);
+    announce("haNewSaved", { path, url: `/local/${filename}` });
+  } catch (error) {
+    if (/Unsupported icon set source/.test(error.message)) announce("haUnsupported");
+    else if (error.status === 413) announce("haUploadTooLarge");
+    else announce("haAccessError", { message: error.message });
   }
 }
 
@@ -1026,8 +1296,37 @@ languageButtons.forEach((button) => button.addEventListener("click", () => {
   setLanguage(button.dataset.language);
 }));
 $("#search-icons").addEventListener("input", renderIconList);
+$("#icon-list").addEventListener("scroll", renderIconList, { passive: true });
+$("#icon-list").addEventListener("keydown", (event) => {
+  const current = listNames.indexOf(event.target.closest("[data-icon-name]")?.dataset.iconName ?? activeName);
+  let next = current;
+  if (event.key === "ArrowDown") next = Math.min(listNames.length - 1, current + 1);
+  else if (event.key === "ArrowUp") next = Math.max(0, current - 1);
+  else if (event.key === "PageDown") next = Math.min(listNames.length - 1, current + ICON_LIST_WINDOW_SIZE - 4);
+  else if (event.key === "PageUp") next = Math.max(0, current - ICON_LIST_WINDOW_SIZE + 4);
+  else if (event.key === "Home") next = 0;
+  else if (event.key === "End") next = listNames.length - 1;
+  else return;
+  event.preventDefault();
+  if (listNames[next]) {
+    selectIcon(listNames[next]);
+    requestAnimationFrame(() => $("#icon-list").querySelector(`[data-icon-name="${CSS.escape(listNames[next])}"]`)?.focus());
+  }
+});
 $("#new-icon").addEventListener("click", createNewIcon);
 $("#delete-icon").addEventListener("click", deleteActiveIcon);
+$("#icon-name").addEventListener("input", () => {
+  const nextName = iconNameInput.value.trim();
+  const duplicate = isValidIconName(nextName) && nextName !== activeName && Object.hasOwn(icons, nextName);
+  const invalid = !isValidIconName(nextName);
+  if (duplicate || invalid) {
+    iconNameInput.setAttribute("aria-invalid", "true");
+    $("#icon-name-hint").textContent = duplicate ? dictionary().duplicateNameHint : dictionary().invalidName;
+  } else {
+    iconNameInput.removeAttribute("aria-invalid");
+    $("#icon-name-hint").textContent = dictionary().nameHint;
+  }
+});
 $("#icon-name").addEventListener("change", renameActiveIcon);
 $("#icon-path").addEventListener("input", handleEditorChange);
 $("#icon-viewbox").addEventListener("input", handleEditorChange);
@@ -1040,8 +1339,15 @@ $("#svg-file").addEventListener("change", (event) => {
   }
   if (files.length === 1) void importSvg(files[0], suggestIconName(files[0].name, icons)).then((loaded) => { if (loaded) announce("svgLoaded"); });
   else if (files.length > 1) void (async () => {
+    const previous = { ...icons };
     let loaded = 0;
-    for (const file of files) if (await importSvg(file, suggestIconName(file.name, icons))) loaded += 1;
+    let lastImported = "";
+    for (const file of files) {
+      const name = suggestIconName(file.name, icons);
+      if (await importSvg(file, name, { persist: false, select: false })) { loaded += 1; lastImported = name; }
+    }
+    if (loaded && !(await persistIcons())) { icons = previous; renderIconList(); loaded = 0; }
+    if (lastImported && loaded) selectIcon(lastImported);
     announce("batchImported", { count: loaded });
   })();
   event.target.value = "";
@@ -1076,6 +1382,12 @@ $("#collection-file").addEventListener("change", (event) => {
   if (file) void importCollection(file);
   event.target.value = "";
 });
+$("#ha-read-iconset").addEventListener("click", () => {
+  void readHomeAssistantIconset().catch((error) => {
+    announce(/Unsupported icon set source/.test(error.message) ? "haUnsupported" : "haAccessError", { message: error.message });
+  });
+});
+$("#ha-save-iconset").addEventListener("click", () => { void saveIconsetToHomeAssistant(); });
 $("#copy-usage").addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText($("#usage").value);
