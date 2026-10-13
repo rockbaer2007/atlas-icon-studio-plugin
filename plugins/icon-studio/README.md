@@ -79,3 +79,21 @@ La liste n’affiche que 24 éléments à la fois et prend en charge les flèche
 ## Logiciel tiers
 
 La vectorisation des images utilise [ImageTracerJS 1.2.6](https://github.com/jankovicsandras/imagetracerjs), distribué sous licence Unlicense. Le texte de cette licence est inclus dans `IMAGETRACER-LICENSE.txt`.
+# Startup correction / Startkorrektur / Correction du démarrage (0.1.16)
+
+DE: Ein falscher Selektor beim Exportformat konnte den Start vor dem Laden der
+gespeicherten Icon-Sammlung abbrechen. Der Selektor ist korrigiert; die
+Icon-Bedienung bleibt bis zum Laden gesperrt. Bestehende Sammlungen bleiben
+erhalten. Browserprüfung: gespeichertes Testicon, DE/EN/FR-Export und Neuladen,
+Zeichnen, Rückgängig/Wiederholen und Exportformat-Steuerung.
+
+EN: Fix the export-format selector that could abort startup before saved icons
+loaded. Icon controls remain inert until the collection is loaded. Existing
+collections are preserved. Browser checks cover a saved test icon, DE/EN/FR
+export/reload, drawing, undo/redo and export-format controls.
+
+FR : Le sélecteur du format d'export pouvait interrompre le démarrage avant le
+chargement des icônes enregistrées. Il est corrigé ; les commandes restent
+inactives jusqu'au chargement. Les collections existantes sont conservées.
+Les tests couvrent une icône enregistrée, l'export et le rechargement DE/EN/FR,
+le dessin, annuler/rétablir et les commandes du format d'export.

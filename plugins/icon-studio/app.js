@@ -1560,7 +1560,7 @@ $("#drawing-zoom").addEventListener("input", (event) => {
 });
 $("#drawing-save").addEventListener("click", () => saveDrawing());
 $("#drawing-save-as").addEventListener("click", () => saveDrawing(true));
-$("#drawing-export-format").addEventListener("change", (event) => {
+$("#export-format").addEventListener("change", (event) => {
   $("#export-background-color").disabled = event.target.value === "svg" || $("#export-transparent").checked;
 });
 $("#export-transparent").addEventListener("change", (event) => {
