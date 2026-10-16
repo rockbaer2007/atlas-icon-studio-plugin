@@ -50,6 +50,12 @@ try {
     await page.getByRole("option", { name: "saved-sentinel", exact: true }).click();
     assert.equal(await page.locator("#icon-path").inputValue(), sentinel.path);
   }
+  await page.locator('#drawing-text').fill('Preserved text < & >');
+  await page.locator('[data-tool="text"]').click();
+  await page.locator('#drawing-canvas').click();
+  assert.equal(await page.locator('#drawing-shapes > text').count(), 1, 'Text creation must not fail on a missing validator binding.');
+  await page.locator('#drawing-undo').click();
+  assert.equal(await page.locator('#drawing-shapes > *').count(), 0);
   await page.locator('[data-tool="rect"]').click();
   await page.locator("#drawing-canvas").scrollIntoViewIfNeeded();
   const canvasBox = await page.locator("#drawing-canvas").boundingBox();

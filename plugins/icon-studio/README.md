@@ -2,6 +2,15 @@
 
 Plugin ID: `atlas.plugin.icon-studio`
 
+Version **0.1.17** korrigiert einen fehlenden Import bei der Texteingabe im
+Zeicheneditor. Sammlungs- und Zeichnungsformate bleiben unverändert.
+
+Version **0.1.17** fixes a missing validator import when creating drawing text.
+Collection and drawing storage formats remain unchanged.
+
+La version **0.1.17** corrige un import manquant lors de la création de texte
+dans le dessin. Les formats des collections et dessins restent inchangés.
+
 ## Farbiger SVG-Zeicheneditor / Colored SVG drawing editor / Éditeur SVG couleur
 
 Der separate Zeichenbereich erstellt farbige SVG-Grafiken mit Rechtecken, Ellipsen, Linien, Freihandstift und Text. Formen lassen sich auswählen, verschieben, duplizieren und in der Ebenenreihenfolge anordnen. Füllung und Hintergrund können transparent sein; Kontur, Linienstärke, Textgröße und Zoom sind einstellbar. Löschen, Leeren und bis zu zehn Rückgängig-/Wiederholen-Schritte sind verfügbar. **Speichern unter** exportiert SVG, PNG oder WebP; bei PNG/WebP kann ein transparenter oder farbiger Hintergrund gewählt werden. Der Entwurf bleibt im lokalen Browserspeicher. Downloads werden nicht automatisch nach Home Assistant kopiert.

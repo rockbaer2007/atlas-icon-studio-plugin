@@ -9,7 +9,7 @@ import {
   validateIconCollection,
   validateIconDefinition,
 } from "./iconset-core.js";
-import { clampDrawingZoom, DRAWING_HISTORY_LIMIT, serializeDrawingSvg } from "./drawing-core.js";
+import { clampDrawingZoom, DRAWING_HISTORY_LIMIT, serializeDrawingSvg, validateDrawingShape } from "./drawing-core.js";
 
 const translations = {
   de: {
